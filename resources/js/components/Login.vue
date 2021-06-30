@@ -73,10 +73,13 @@ export default {
                 }
                 axios.post('/api/login', data)
                 .then((response) => {
-                  if(response.data.data){
+                  if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);
                     localStorage.setItem('id', response.data.data.id);
+                    localStorage.setItem('account_id', response.data.data.account_id);
                     localStorage.setItem('name', response.data.data.name);
+                    localStorage.setItem('email', response.data.data.email);
+                    localStorage.setItem('role', response.data.data.role);
                     localStorage.setItem('token', response.data.data.api_token);
                     this.$router.push({path: '/home'});
                   }else{

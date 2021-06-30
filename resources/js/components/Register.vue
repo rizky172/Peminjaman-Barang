@@ -88,12 +88,9 @@ export default {
                 }
                 axios.post('/api/register', data)
                 .then((response) => {
-                  if(response.data.data){
+                  if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);
-                    // localStorage.setItem('id', response.data.data.id);
-                    // localStorage.setItem('name', response.data.data.name);
-                    // localStorage.setItem('token', response.data.data.api_token);
-                    // this.$router.push({path: '/home'});
+                    this.$router.push({path: '/'});
                   }else{
                     Bus.$emit('sweetAlert', response.data);
                   }

@@ -7,7 +7,8 @@ import Home from './components/Home.vue';
 import User from './components/User/Index.vue';
 import Kategori from './components/Kategori/Index.vue';
 import Dummy from './components/Dummy/Index.vue';
-import Produk from './components/Produk/Index.vue';
+import Barang from './components/Barang/Index.vue';
+import Pegawai from './components/Pegawai/Index.vue';
 
 Vue.use(Router);
 
@@ -48,6 +49,14 @@ const router = new Router({
       },
     },
     {
+      name:'pegawai',
+      path:'/pegawai',
+      component: Pegawai,
+      meta: {
+        auth: true
+      },
+    },
+    {
       name:'kategori',
       path:'/kategori',
       component: Kategori,
@@ -64,9 +73,9 @@ const router = new Router({
       },
     },
     {
-      name:'produk',
-      path:'/produk',
-      component: Produk,
+      name:'barang',
+      path:'/barang',
+      component: Barang,
       meta: {
         auth: true
       },

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use App\Http\Requests;
 use App\UserModel;
+use App\PegawaiModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator;
 use App\User;
 use App\Mail\VerifyEmail;
 use Crypt;
@@ -17,6 +17,15 @@ use Mail;
 
 class AuthController extends Controller
 {
+
+    public function rules(){
+        return [
+            'name'              => 'required',
+            'email'             => 'required|email',
+            'password'          => 'required',
+            'retype_password'   => 'required'
+        ];
+    }
 
     function login(Request $request){
         $user = User::where('email', '=', $request->email)->first();
@@ -28,10 +37,11 @@ class AuthController extends Controller
                 if($user['status'] == 'actived'){
                     if (Hash::check($request->password, $user->password)) {
                         session([
-                            'id'    =>$user->id,
-                            'name'  => $user->name,
-                            'role'  => $user->role,
-                            'login' => TRUE
+                            'id'            => $user->id,
+                            'account_id'    => $user->account_id,
+                            'name'          => $user->name,
+                            'role'          => $user->role,
+                            'login'         => TRUE
                         ]);
                         $user->generateToken();
                         $data = $user->toArray();
@@ -59,6 +69,61 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request)
+    {
+        $class = "error";
+        $message = "";
+        $data = null;
+        try {
+            $validator = Validator::make($request->all(), $this->rules());
+            if ($validator->fails()) {
+                $message = $validator->errors()->first();
+            }else{
+                if($request->password != $request->retype_password){
+                    $message = 'Password tidak sama !';
+                }else if($user = User::where('email', '=', $request->email)->first()){
+                    $message = 'Email sudah digunakan !';
+                }else{
+                    do {
+                        // random number for 4 digit
+                        $int = mt_rand(1000,9999);
+                        $cek_id = UserModel::where('account_id',$int);
+                    } while (!$cek_id);
+                        $account_id = $int;
+                    $data =  new UserModel();
+                    $data->account_id   = $account_id;
+                    $data->name         = $request->name;
+                    $data->email        = $request->email;
+                    $data->password     = Hash::make($request->password);
+                    $data->role         = 'member';
+                    $data->status       = 'actived';
+                    $data->save();
+                    // jika berhasil lalu insert ke table pegawai
+                    if($data){
+                        $cekUser= UserModel::find($data->id);
+                        if($cekUser){
+                            $dataPegawai =  new PegawaiModel();
+                            $dataPegawai->account_id   = $cekUser->account_id;
+                            $dataPegawai->nama         = $cekUser->name;
+                            $dataPegawai->email        = $cekUser->email;
+                            $dataPegawai->created_by   = $cekUser->account_id;
+                            $dataPegawai->save();
+                            $class = 'success';
+                            $message = 'Data has ben Saved !';
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json([
+            'class'     => $class,
+            'message'   => $message,
+            'data'      => $data
+        ]);
+    }
+
     function logout(Request $request){
         $user = Auth::user();
         if ($user) {
@@ -70,52 +135,10 @@ class AuthController extends Controller
             'class' => 'success',
             'message' => 'logout berhasil',
             'data' => $user
-        ], 200); 
+        ]); 
     }
 
-    public function register(Request $request)
-    {
-        
-        
-        $class = "error";
-        $message = "";
-        $data = null;
-        $data =  new UserModel();
-        // $code = 400;
-                // 'name'      => $request->name,
-                // 'email'     => $request->email,
-                // 'password'  => Hash::make($request->password),
-                // 'role'      => 'admin',
-                // 'status'    => 'pending'
-            $data->name         = $request->name;
-            $data->email         = $request->email;
-            $data->password       = Hash::make($request->password);
-            $data->role       = 'admin';
-            $data->status   = 'pending';
-            $data->save();
-            
-            // if($user){
-                // Auth::login($user);
-                $class = 'success';
-                $message = 'Data has ben Saved !';
-            // }
-            // else{
-            //     $message = 'register failed';
-            // }
-        // }
+    
 
-        return response()->json([
-            'class'     => $class,
-            'message'   => $message,
-            'data'      => $data
-        ], 200);
-    }
-
-    // function register(Request $req){
-    //     $data =  new ModelUser();
-    //     $data->username = $req->username;
-    //     $data->password = bcrypt($req->password);
-    //     $data->save();
-    //     return redirect('login');
-    // }
+    
 }

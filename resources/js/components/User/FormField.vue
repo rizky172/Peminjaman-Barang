@@ -26,6 +26,16 @@
                                 v-model="formData.email" :disabled="disabled" required>
                             </div> 
                         </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-4">Role</label>
+                            <div class="col-md-8">
+                                <select class="form-control" v-model="formData.role"
+                                :disabled="disabled" required>
+                                    <option value="admin">Admin</option>
+                                    <option value="member">Member</option>
+                                </select>
+                            </div> 
+                        </div>
                     </template>
                     <template v-if="cmd == 'store' || cmd == 'change'">
                         <div class="form-group row">

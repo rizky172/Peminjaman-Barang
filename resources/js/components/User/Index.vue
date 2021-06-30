@@ -5,7 +5,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Dummy</h1>
+                            <h1>Users</h1>
                         </div>
                     </div>
                 </div>
@@ -32,8 +32,10 @@
                                         <thead>
                                             <tr style="text-align:center">
                                                 <th>No</th>
+                                                <th>Account Id</th>
                                                 <th>Nama</th>
                                                 <th>Email</th>
+                                                <th>Role</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -41,8 +43,10 @@
                                             <template v-if="table.length > 0">
                                                 <tr v-for="(row, index) in filterData" :key="row.id">
                                                     <td style="text-align:center">{{ index + 1 }}</td>
+                                                    <td>{{ row.account_id }}</td>
                                                     <td>{{ row.name }}</td>
                                                     <td>{{ row.email }}</td>
+                                                    <td>{{ row.role }}</td>
                                                     <td>
                                                         <div class="input-group">
                                                             <button style="margin:auto" type="button" class="btn btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown">
@@ -69,7 +73,7 @@
                                             </template>
                                             <template v-else>
                                                 <tr style="text-align:center">
-                                                    <td colspan="4">Data Kosong</td>
+                                                    <td colspan="6">Data Kosong</td>
                                                 </tr>
                                             </template>
                                         </tbody>

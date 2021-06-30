@@ -48,7 +48,17 @@ Route::group(["prefix"=>"/user"], function(){
     Route::post('/update', 'UserController@update');
     Route::post('/change', 'UserController@change');
 });
-// test
+
+Route::group(["prefix"=>"/pegawai"], function(){
+    Route::get('/table', 'PegawaiController@table');
+    Route::get('/count', 'PegawaiController@count');
+    Route::get('/show/{id}', 'PegawaiController@show');
+    Route::get('/delete/{id}', 'PegawaiController@delete');
+    Route::post('/store', 'PegawaiController@store');
+    Route::post('/update', 'PegawaiController@update');
+    Route::post('/change', 'PegawaiController@change');
+});
+
 
 Route::group(["prefix"=>"/kategori"], function(){
     Route::get('/table', 'KategoriController@table');
@@ -59,14 +69,14 @@ Route::group(["prefix"=>"/kategori"], function(){
     Route::post('/update', 'KategoriController@update');
 });
 
-Route::group(["prefix"=>"/produk"], function(){
-    Route::get('/table', 'ProdukController@table');
-    Route::get('/count', 'ProdukController@count');
-    Route::get('/show/{id}', 'ProdukController@show');
-    Route::get('/delete/{id}', 'ProdukController@delete');
-    Route::get('/getKategori', 'ProdukController@getKategori');
-    Route::post('/store', 'ProdukController@store');
-    Route::post('/update', 'ProdukController@update');
+Route::group(["prefix"=>"/barang"], function(){
+    Route::get('/table', 'BarangController@table');
+    Route::get('/count', 'BarangController@count');
+    Route::get('/show/{id}', 'BarangController@show');
+    Route::get('/delete/{id}', 'BarangController@delete');
+    Route::get('/getKategori', 'BarangController@getKategori');
+    Route::post('/store', 'BarangController@store');
+    Route::post('/update', 'BarangController@update');
 });
 
 

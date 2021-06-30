@@ -33,44 +33,69 @@
                                     <p>Home</p>
                             </router-link>
                         </li>
-                        <!-- <li class="nav-item">
-                            <router-link :to="{ name: 'kategori' }" class="nav-link">
-                                <i class="nav-icon fas fa-cubes"></i> 
-                                    <p>Kategori</p>
-                            </router-link>
-                        </li> -->
-                        <li class="nav-item has-treeview">
+                        <template v-if="role == 'admin'">
+                            <li class="nav-item has-treeview">
                             <a href="" class="nav-link">
-                            <i class="nav-icon fas fa-cubes"></i>
+                            <i class="nav-icon fas fa-sitemap"></i>
                                 <p>
-                                    Barang
+                                    Master
                                     <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <router-link :to="{ name: 'produk' }" class="nav-link">
-                                        <i class="nav-icon fas fa-users"></i> 
-                                            <p>Produk</p>
+                                    <router-link :to="{ name: 'barang' }" class="nav-link">
+                                        <i class="nav-icon fas fa-cubes"></i> 
+                                            <p>Barang</p>
                                     </router-link>
                                 </li>
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <router-link :to="{ name: 'kategori' }" class="nav-link">
-                                        <i class="nav-icon fas fa-users"></i> 
+                                        <i class="nav-icon fas fa-cubes"></i> 
                                             <p>Kategori</p>
                                     </router-link>
                                 </li>
                             </ul>
                         </li>  
-                        <li class="nav-header">EXAMPLES</li>
-                        <li class="nav-item">
-                            <router-link :to="{ name: 'user' }" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i> 
-                                    <p>Users</p>
-                            </router-link>
-                        </li>
+                        </template>
+                        <template v-if="role == 'member'">
+                            <li class="nav-item has-treeview">
+                            <a href="" class="nav-link">
+                            <i class="nav-icon fas fa-sitemap"></i>
+                                <p>
+                                    Transaksi
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon fas fa-cubes"></i> 
+                                            <p>Peminjaman</p>
+                                    </a>
+                                        
+                                </li>
+                            </ul>
+                        </li>  
+                        </template>
+
+                        <template v-if="role == 'admin'">
+                            <li class="nav-header">EXAMPLES</li>
+                            <li class="nav-item">
+                                <router-link :to="{ name: 'pegawai' }" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i> 
+                                        <p>Pegawai</p>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :to="{ name: 'user' }" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i> 
+                                        <p>Users</p>
+                                </router-link>
+                            </li>
+                        </template>
                     </ul>
                 </nav>
             </div>
@@ -82,6 +107,7 @@ export default {
     name :'Navbar',
     data: () => ({
         name: localStorage.getItem('name'),
+        role: localStorage.getItem('role'),
         token: localStorage.getItem('token'),
     }),   
     methods:{
