@@ -125,7 +125,6 @@ export default {
                 if(response.data){
                     if(data[1] == 'edit'){
                         this.cmd = 'update';
-                        console.log(response.data);
                         this.formData = response.data;
                     }else if(data[1] == 'detail'){
                         this.cmd = 'detail';

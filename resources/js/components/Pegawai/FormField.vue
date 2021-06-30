@@ -45,6 +45,16 @@
                             </div> 
                         </div>
                         <div class="form-group row">
+                            <label class="col-form-label col-md-4">Jenis Kelamin</label>
+                            <div class="col-md-8">
+                                <select class="form-control" v-model="formData.jenis_kelamin"
+                                :disabled="disabled" required>
+                                    <option value="laki-laki">Laki-Laki</option>
+                                    <option value="perempuan">Perempuan</option>
+                                </select>
+                            </div> 
+                        </div>
+                        <div class="form-group row">
                             <label class="col-form-label col-md-4">Unit Kerja</label>
                             <div class="col-md-8">
                                 <textarea autocomplete="off" v-model="formData.unit_kerja"

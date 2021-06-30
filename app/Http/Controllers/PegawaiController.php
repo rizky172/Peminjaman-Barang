@@ -38,53 +38,53 @@ class PegawaiController extends Controller
         return response()->json($response);
     }
 
-    public function rules(){
-        return [
-            'nip'           => 'required',
-            'nama'          => 'required',
-            'tgl_lahir'     => 'required',
-            'agama'         => 'required',
-            'unit_kerja'    => 'required',
-            'jabatan'       => 'required',
-            'tlp'           => 'required',
-            'email'         => 'required'
-        ];
-    }
+    // public function rules(){
+    //     return [
+    //         'nip'           => 'required',
+    //         'nama'          => 'required',
+    //         'tgl_lahir'     => 'required',
+    //         'agama'         => 'required',
+    //         'unit_kerja'    => 'required',
+    //         'jabatan'       => 'required',
+    //         'tlp'           => 'required',
+    //         'email'         => 'required'
+    //     ];
+    // }
 
-    public function store(Request $request)
-    {   $class = "error";
-        $message = "";
-        $data = null;
+    // public function store(Request $request)
+    // {   $class = "error";
+    //     $message = "";
+    //     $data = null;
 
-        try {
-            $data =  new PegawaiModel();
-            $validator = Validator::make($request->all(), $this->rules());
-            if ($validator->fails()) {
-                $message = $validator->errors()->first();
-            }else{
-                    $data->nip          = $request->nip;
-                    $data->nama         = $request->nama;
-                    $data->tgl_lahir    = $request->tgl_lahir;
-                    $data->agama        = $request->agama;
-                    $data->unit_kerja   = $request->unit_kerja;
-                    $data->jabatan      = $request->jabatan;
-                    $data->tlp          = $request->tlp;
-                    $data->email        = $request->email;
-                    $data->alamat       = $request->alamat;
-                    $data->created_by   = session('account_id');
-                    $data->save();
-                    $class = 'success';
-                    $message = 'Data has ben Saved !';
-            }
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-        }
-        return response()->json([
-            'class'     => $class,
-            'message'   => $message,
-            'data'      => $data
-        ]);
-    }
+    //     try {
+    //         $data =  new PegawaiModel();
+    //         $validator = Validator::make($request->all(), $this->rules());
+    //         if ($validator->fails()) {
+    //             $message = $validator->errors()->first();
+    //         }else{
+    //                 $data->nip          = $request->nip;
+    //                 $data->nama         = $request->nama;
+    //                 $data->tgl_lahir    = $request->tgl_lahir;
+    //                 $data->agama        = $request->agama;
+    //                 $data->unit_kerja   = $request->unit_kerja;
+    //                 $data->jabatan      = $request->jabatan;
+    //                 $data->tlp          = $request->tlp;
+    //                 $data->email        = $request->email;
+    //                 $data->alamat       = $request->alamat;
+    //                 $data->created_by   = session('account_id');
+    //                 $data->save();
+    //                 $class = 'success';
+    //                 $message = 'Data has ben Saved !';
+    //         }
+    //     } catch (\Exception $e) {
+    //         $message = $e->getMessage();
+    //     }
+    //     return response()->json([
+    //         'class'     => $class,
+    //         'message'   => $message,
+    //         'data'      => $data
+    //     ]);
+    // }
 
     public function show($id)
     {   
@@ -96,84 +96,84 @@ class PegawaiController extends Controller
         return response()->json($response);
     }
 
-    public function update(Request $request)
-    {   
-        $class = "error";
-        $message = "";
-        $data = null;
-        try {
-            $validator = Validator::make($request->all(), $this->rules());
-            if ($validator->fails()) {
-                $message = $validator->errors()->first();
-            }else{
-                $data = PegawaiModel::where('id',$request->id)
-                ->update([
-                    'nip'           => $request->nip,
-                    'nama'          => $request->nama,
-                    'tgl_lahir'     => $request->tgl_lahir,
-                    'alamat'        => $request->alamat,
-                    'agama'         => $request->agama,
-                    'jabatan'       => $request->jabatan,
-                    'unit_kerja'    => $request->unit_kerja,
-                    'email'         => $request->email,
-                    'tlp'           => $request->tlp
-                ]);
-                $class = 'success';
-                $message = 'Data has ben Saved !';
-            }
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-        }
-        return response()->json([
-            'class'     => $class,
-            'message'   => $message,
-            'data'      => $data
-        ]);
-    }
+    // public function update(Request $request)
+    // {   
+    //     $class = "error";
+    //     $message = "";
+    //     $data = null;
+    //     try {
+    //         $validator = Validator::make($request->all(), $this->rules());
+    //         if ($validator->fails()) {
+    //             $message = $validator->errors()->first();
+    //         }else{
+    //             $data = PegawaiModel::where('id',$request->id)
+    //             ->update([
+    //                 'nip'           => $request->nip,
+    //                 'nama'          => $request->nama,
+    //                 'tgl_lahir'     => $request->tgl_lahir,
+    //                 'alamat'        => $request->alamat,
+    //                 'agama'         => $request->agama,
+    //                 'jabatan'       => $request->jabatan,
+    //                 'unit_kerja'    => $request->unit_kerja,
+    //                 'email'         => $request->email,
+    //                 'tlp'           => $request->tlp
+    //             ]);
+    //             $class = 'success';
+    //             $message = 'Data has ben Saved !';
+    //         }
+    //     } catch (\Exception $e) {
+    //         $message = $e->getMessage();
+    //     }
+    //     return response()->json([
+    //         'class'     => $class,
+    //         'message'   => $message,
+    //         'data'      => $data
+    //     ]);
+    // }
 
-    public function change(Request $request){
+    // public function change(Request $request){
 
-        $class = "error";
-        $message = "";
-        $data = null;
-        try {
-            if($request->password != $request->retype_password){
-                $message = 'Password tidak sama !';
-            }else{
-                PegawaiModel::where('id',$request->id)
-                ->update([
-                    'password'  => Hash::make($request->password)
-                ]);
-                $class = 'success';
-                $message = 'Data has ben Saved !';
-            }
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-        }
-        return response()->json([
-            'class'     => $class,
-            'message'   => $message,
-            'data'      => $data
-        ]);
-    }
+    //     $class = "error";
+    //     $message = "";
+    //     $data = null;
+    //     try {
+    //         if($request->password != $request->retype_password){
+    //             $message = 'Password tidak sama !';
+    //         }else{
+    //             PegawaiModel::where('id',$request->id)
+    //             ->update([
+    //                 'password'  => Hash::make($request->password)
+    //             ]);
+    //             $class = 'success';
+    //             $message = 'Data has ben Saved !';
+    //         }
+    //     } catch (\Exception $e) {
+    //         $message = $e->getMessage();
+    //     }
+    //     return response()->json([
+    //         'class'     => $class,
+    //         'message'   => $message,
+    //         'data'      => $data
+    //     ]);
+    // }
     
-    public function delete($id)
-    {   
-        $class = "error";
-        $message = "";
-        $data = null;
-        try {
-            $data = PegawaiModel::find($id);
-            $data->delete();
-            $class = 'success';
-            $message = 'Data has ben Delete !';
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-        }
-        return response()->json([
-            'class'     => $class,
-            'message'   => $message,
-            'data'      => $data
-        ]);
-    }
+    // public function delete($id)
+    // {   
+    //     $class = "error";
+    //     $message = "";
+    //     $data = null;
+    //     try {
+    //         $data = PegawaiModel::find($id);
+    //         $data->delete();
+    //         $class = 'success';
+    //         $message = 'Data has ben Delete !';
+    //     } catch (\Exception $e) {
+    //         $message = $e->getMessage();
+    //     }
+    //     return response()->json([
+    //         'class'     => $class,
+    //         'message'   => $message,
+    //         'data'      => $data
+    //     ]);
+    // }
 }

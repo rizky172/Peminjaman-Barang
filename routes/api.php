@@ -79,6 +79,12 @@ Route::group(["prefix"=>"/barang"], function(){
     Route::post('/update', 'BarangController@update');
 });
 
+Route::group(["prefix"=>"/profil"], function(){
+    Route::get('/show/{id}', 'ProfilController@show');
+    Route::post('/update', 'ProfilController@update');
+    Route::post('/change', 'ProfilController@change');
+});
+
 
 
 

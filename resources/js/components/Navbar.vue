@@ -9,13 +9,16 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="fas fa-user"> {{ name }}</i>
+                        <i class="fas fa-user"> {{ name }}</i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <div class="dropdown-divider"></div>
-                    <a href="#" @click.prevent="logout()" class="dropdown-item">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
+                        <router-link :to="{ name: 'profil' }" class="dropdown-item">
+                            <i class="fas fa-user"></i> Profil
+                        </router-link>
+                        <a href="#" @click.prevent="logout()" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
                     </div>
                 </li>
             </ul>
@@ -105,11 +108,13 @@
 <script>
 export default {
     name :'Navbar',
-    data: () => ({
-        name: localStorage.getItem('name'),
-        role: localStorage.getItem('role'),
-        token: localStorage.getItem('token'),
-    }),   
+    data () {
+        return {
+            name: localStorage.getItem('name'),
+            role: localStorage.getItem('role'),
+            token: localStorage.getItem('token')
+        }
+    },
     methods:{
         logout:function(){
             let config = {

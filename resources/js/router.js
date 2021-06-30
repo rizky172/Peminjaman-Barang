@@ -9,6 +9,7 @@ import Kategori from './components/Kategori/Index.vue';
 import Dummy from './components/Dummy/Index.vue';
 import Barang from './components/Barang/Index.vue';
 import Pegawai from './components/Pegawai/Index.vue';
+import Profil from './components/Profil.vue';
 
 Vue.use(Router);
 
@@ -79,6 +80,14 @@ const router = new Router({
       meta: {
         auth: true
       },
+    },
+    {
+      name:'profil',
+      path:'/profil',
+      component: Profil,
+      meta: {
+        auth: true
+      }
     }
   ]
 });
