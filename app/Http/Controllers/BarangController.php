@@ -48,8 +48,7 @@ class BarangController extends Controller
         return [
             'nama'          => 'required',
             'merk'          => 'required',
-            'id_kategori'   => 'required',
-            'file'          => 'required'
+            'id_kategori'   => 'required'
         ];
     }
 

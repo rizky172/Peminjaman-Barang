@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\PegawaiModel;
 use \App\UserModel;
+use \App\LogModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -71,6 +72,32 @@ class ProfilController extends Controller
                         $message = 'Data has ben Saved !';
                     }
                 }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json([
+            'class'     => $class,
+            'message'   => $message,
+            'data'      => $data
+        ]);
+    }
+
+    public function change(Request $request){
+
+        $class = "error";
+        $message = "";
+        $data = null;
+        try {
+            if($request->password != $request->retype_password){
+                $message = 'Password tidak sama !';
+            }else{
+                UserModel::where('account_id',$request->account_id)
+                ->update([
+                    'password'  => Hash::make($request->password)
+                ]);
+                $class = 'success';
+                $message = 'Data has ben Saved !';
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

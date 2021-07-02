@@ -97,6 +97,9 @@
                             <b-button class="btn btn-primary btn-block" v-b-modal="'id-modal'" @click="formModal(account_id,'edit')">
                                 <i class="fa fa-edit"></i> Update
                             </b-button>
+                            <b-button class="btn btn-primary btn-block" v-b-modal="'id-modal'" @click="formModal(account_id,'change')">
+                                <i class="fa fa-key"></i> Change Password
+                            </b-button>
                         </div>
                         </div>
                     </div>
@@ -104,25 +107,39 @@
         
                     <div class="col-md-8">
                         <div class="card">
-                        <div class="card-body">
-                            <div class="tab-content"> 
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr style="text-align:center">
-                                            <th>No</th>
-                                            <th>Day</th>
-                                            <th>Last Login</th>
-                                            <th>Last Logout</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr style="text-align:center">
-                                            <td colspan="4">Data Kosong</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="card-body">
+                                <div class="tab-content"> 
+                                    <Rows></Rows>
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr style="text-align:center">
+                                                <th>No</th>
+                                                <th>Last Login</th>
+                                                <th>Last Logout</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-if="table.length > 0">
+                                                <tr v-for="(row, index) in filterData" :key="row.id">
+                                                    <td style="text-align:center">{{ index + 1 }}</td>
+                                                    <td>{{ row.last_login ? row.last_login : 'Kosong'  }}</td>
+                                                    <td>{{ row.last_logout ? row.last_logout : 'Kosong' }}</td>
+                                                </tr>
+                                            </template>
+                                            <template v-else>
+                                                <tr style="text-align:center">
+                                                    <td colspan="3">Data Kosong</td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card-footer clearfix">
+                                    <ItemPerPage></ItemPerPage>
+                                    <Scroll></Scroll>
+                                    <Pagination></Pagination>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -134,22 +151,93 @@
 </template>
 <script>
 import FormFieldProfil from './FormFieldProfil.vue';
+import Rows from './DataTables/Rows.vue';
+import ItemPerPage from './DataTables/ItemPerPage.vue';
+import Scroll from './DataTables/Scroll.vue';
+import Pagination from './DataTables/Pagination.vue';
 export default {
     name :'Profil',
     components: {
-        FormFieldProfil
+        FormFieldProfil,
+        Rows,
+        ItemPerPage,
+        Scroll,
+        Pagination
     },
     data () {
         return {
             account_id: localStorage.getItem('account_id'),
-            formData:{}
+            formData:{},
+            table : [],
+            itemPerPage : [],
+            itemPerScroll: 0,
+            search: '',
+            entry: 0,
+            totalPage: 0,
+            totalRecords: 0,
+            isPage: 0,
+            isScroll: 0,
+            isCurrentPage: 1,
+            isPageNext: 0,
+            isPageOld: 10
         }
     },
     mounted() {
-        this.getData();
+        this.getDataLog();
+        this.getDataProfil();
+        this.getCount();
+    },
+    computed:{
+        filterData: function(){
+            var data = this.table;
+            var filterKey = this.search;
+            if(filterKey){
+                data = data.filter(function (row) {
+                    return Object.keys(row).some(function (key) {
+                        return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+                    })
+                })
+                let setPage = {isPage:this.entry}; 
+                Bus.$emit('setPage', setPage);
+            }
+            if(this.isCurrentPage > 1 && this.isPage > 10){
+                var a = Math.floor(this.isPage + this.isPageOld);
+                data = data.slice(this.isPageOld, a);
+            }else{
+                if(this.isCurrentPage > 1){
+                    data = data.slice(this.isPageOld, this.isPageNext);
+                }else{
+                    data = data.slice(0, this.isPage);
+                }
+            }
+            this.entry = data.length;
+            Bus.$emit('setEntry', this.entry);
+            return data;
+        }
     },
     methods: {
-        getData: function(){
+        getCount: function(){
+            let url = 'api/log/count';
+            axios.get(url).then(response => {
+                if(response.data !== 'empty'){
+                    this.totalRecords = response.data.totalRecords;
+                    this.itemPerScroll = Math.floor((response.data.totalRecords / 100) + 1);
+                    Bus.$emit('setItemPerScroll', this.itemPerScroll);
+                    Bus.$emit('setTotalRecords', this.totalRecords);
+                }
+            }).catch(e => console.log(e));
+        },
+        getDataLog: function(){
+            let url = 'api/log/table?s='+this.isScroll;
+            axios.get(url).then(response => {
+                if(response.data !== 'empty'){
+                    this.totalPage = response.data.length;
+                    this.table = response.data;
+                    Bus.$emit('setTotalPage', this.totalPage);
+                }
+            }).catch(e => console.log(e));
+        },
+        getDataProfil: function(){
             let url = 'api/profil/show/'+this.account_id;
             axios.get(url).then(response => {
                 if(response.data){
@@ -157,13 +245,39 @@ export default {
                 }
             }).catch(e => console.log(e));
         },
+        setItemPerPage: function(data){
+            this.itemPerPage = data['itemPerPage'];
+            this.isPage = data['isPage'];
+        },
+        setScroll: function(data){
+            this.isScroll = data;
+        },
+        currentPage: function(data){
+            this.isCurrentPage = data;
+        },
+        pageNext: function(data){
+            this.isPageNext = data;
+        },
+        pageOld: function(data){
+            this.isPageOld = data;
+        },
         formModal:function(id, cmd){
             let data = [id,cmd]
             Bus.$emit('formModal', data)
         },
     },
     created: function () {
-        Bus.$on('refreshData', this.getData);
+        Bus.$on('refreshData', this.getDataLog);
+        Bus.$on('setItemPerPage', this.setItemPerPage);
+        Bus.$on('setScroll', this.setScroll);
+        Bus.$on('setCurrentPage', this.currentPage);
+        Bus.$on('setPageNext', this.pageNext);
+        Bus.$on('setPageOld', this.pageOld);
+    },
+    watch: {
+        isScroll: function () {
+            this.getDataLog()
+        }
     }
 }
 </script>

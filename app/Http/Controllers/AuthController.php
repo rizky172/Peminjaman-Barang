@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\UserModel;
 use App\PegawaiModel;
+use App\LogModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,11 @@ class AuthController extends Controller
             if($user){
                 if($user['status'] == 'actived'){
                     if (Hash::check($request->password, $user->password)) {
+                        $dataLog =  new LogModel();
+                        $dataLog->account_id    = $user->account_id;
+                        $dataLog->last_login    = date("Y-m-d H:i:s");
+                        $dataLog->save();
+
                         session([
                             'id'            => $user->id,
                             'account_id'    => $user->account_id,
@@ -126,7 +132,13 @@ class AuthController extends Controller
 
     function logout(Request $request){
         $user = Auth::user();
+        $account_id = session('account_id');
         if ($user) {
+            $dataLog =  new LogModel();
+            $dataLog->account_id    = $account_id;
+            $dataLog->last_logout   = date("Y-m-d H:i:s");
+            $dataLog->save();
+
             $request->session()->flush();
             $user->api_token = null;
             $user->save();

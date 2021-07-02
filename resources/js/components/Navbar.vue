@@ -63,8 +63,7 @@
                             </ul>
                         </li>  
                         </template>
-                        <template v-if="role == 'member'">
-                            <li class="nav-item has-treeview">
+                        <li class="nav-item has-treeview">
                             <a href="" class="nav-link">
                             <i class="nav-icon fas fa-sitemap"></i>
                                 <p>
@@ -82,8 +81,6 @@
                                 </li>
                             </ul>
                         </li>  
-                        </template>
-
                         <template v-if="role == 'admin'">
                             <li class="nav-header">EXAMPLES</li>
                             <li class="nav-item">

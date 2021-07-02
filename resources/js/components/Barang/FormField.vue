@@ -86,7 +86,6 @@ export default {
             this.disabled = false;
         },
         onSubmit: function(){
-            console.log(this.formData);
             let url = 'api/barang/'+this.cmd;
             axios.post(url, this.formData).then(response => {
                 if(response.data.class == 'success'){

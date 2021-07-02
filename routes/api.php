@@ -28,17 +28,6 @@ Route::group(["prefix"=>"/"], function(){
 });
 
 
-Route::group(["prefix"=>"/dummy"], function(){
-    Route::get('/table', 'DummyController@table')->name('dummys');
-    Route::get('/count', 'DummyController@count');
-    Route::get('/search', 'DummyController@search');
-    Route::get('/show/{id}', 'DummyController@show');
-    Route::get('/delete/{id}', 'DummyController@delete');
-    Route::post('/store', 'DummyController@store');
-    Route::post('/update', 'DummyController@update');
-});
-
-
 Route::group(["prefix"=>"/user"], function(){
     Route::get('/table', 'UserController@table');
     Route::get('/count', 'UserController@count');
@@ -85,8 +74,20 @@ Route::group(["prefix"=>"/profil"], function(){
     Route::post('/change', 'ProfilController@change');
 });
 
+Route::group(["prefix"=>"/log"], function(){
+    Route::get('/table', 'LogController@table');
+    Route::get('/count', 'LogController@count');
+});
 
-
+Route::group(["prefix"=>"/pinjam"], function(){
+    Route::get('/table', 'PinjamController@table');
+    Route::get('/count', 'PinjamController@count');
+    Route::get('/show/{id}', 'PinjamController@show');
+    Route::get('/delete/{id}', 'PinjamController@delete');
+    Route::post('/store', 'PinjamController@store');
+    Route::post('/update', 'PinjamController@update');
+    Route::get('/getBarangAll', 'PinjamController@getBarangAll');
+});
 
 
 

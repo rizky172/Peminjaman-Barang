@@ -6,10 +6,10 @@ import Register from './components/Register.vue';
 import Home from './components/Home.vue';
 import User from './components/User/Index.vue';
 import Kategori from './components/Kategori/Index.vue';
-import Dummy from './components/Dummy/Index.vue';
 import Barang from './components/Barang/Index.vue';
 import Pegawai from './components/Pegawai/Index.vue';
 import Profil from './components/Profil.vue';
+import Pinjam from './components/Pinjam/Index.vue';
 
 Vue.use(Router);
 
@@ -66,14 +66,6 @@ const router = new Router({
       },
     },
     {
-      name:'dummy',
-      path:'/dummy',
-      component: Dummy,
-      meta: {
-        auth: true
-      },
-    },
-    {
       name:'barang',
       path:'/barang',
       component: Barang,
@@ -85,6 +77,14 @@ const router = new Router({
       name:'profil',
       path:'/profil',
       component: Profil,
+      meta: {
+        auth: true
+      }
+    },
+    {
+      name:'pinjam',
+      path:'/pinjam',
+      component: Pinjam,
       meta: {
         auth: true
       }
