@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use \App\PegawaiModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Auth;
 class PegawaiController extends Controller
 {
     public function count(){

@@ -9,7 +9,8 @@ import Kategori from './components/Kategori/Index.vue';
 import Barang from './components/Barang/Index.vue';
 import Pegawai from './components/Pegawai/Index.vue';
 import Profil from './components/Profil.vue';
-import Pinjam from './components/Pinjam/Index.vue';
+import Peminjaman from './components/Peminjaman/Index.vue';
+import Cek_Peminjaman from './components/Check Peminjaman/Index.vue';
 
 Vue.use(Router);
 
@@ -82,9 +83,17 @@ const router = new Router({
       }
     },
     {
-      name:'pinjam',
-      path:'/pinjam',
-      component: Pinjam,
+      name:'peminjaman',
+      path:'/peminjaman',
+      component: Peminjaman,
+      meta: {
+        auth: true
+      }
+    },
+    {
+      name:'cek_peminjaman',
+      path:'/cek_peminjaman',
+      component: Cek_Peminjaman,
       meta: {
         auth: true
       }
@@ -94,14 +103,14 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.auth)) {
-    if (localStorage.getItem('token')) {
+    if ($cookies.get('token')) {
       next();
     } else {
-      window.alert('Harus Login Dulu !')
+      window.alert('Silahkan Login Terlebih Dahulu !');
       next('/');
     }
   } else {
-    if(localStorage.getItem('token') && to.path == '/'){
+    if($cookies.get('token') && to.path == '/'){
       next({name :'home'})
     }else{
       next();

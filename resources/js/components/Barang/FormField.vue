@@ -29,13 +29,22 @@
                         <div class="form-group row">
                             <label class="col-form-label col-md-4">Kategori</label>
                             <div class="col-md-8">
-                                <select class="form-control" v-model="formData.id_kategori">
+                                <select class="form-control" v-model="id_kategori">
                                     <option v-for="option in options" v-bind:value="option.id">
                                         {{ option.nama }}
                                     </option>
                                 </select>
                             </div> 
                         </div>
+                        <template v-if="nama_kategori">
+                            <div class="form-group row">
+                                <label class="col-form-label col-md-4">Stok</label>
+                                <div class="col-md-8">
+                                    <input autocomplete="off" type="number" class="form-control" 
+                                    v-model="formData.stok" :disabled="disabled">
+                                </div> 
+                            </div>
+                        </template>
                         <!-- <div class="form-group row">
                             <label class="col-form-label col-md-4">Gambar</label>
                             <div class="col-md-8">
@@ -64,37 +73,36 @@ export default {
             show: false,
             cmd: 'store',
             disabled: false,
-            options:{},
-            files:''
+            options: {},
+            files: '',
+            id_kategori: 0,
+            nama_kategori: false
         }
     },
     mounted() {
         this.getKategori();
     },
     methods: {
-        getKategori: function(){
-            let url = 'api/barang/getKategori';
-            axios.get(url).then(response => {
-                if(response.data !=='empty'){
-                    this.options = response.data;
-                }
-            }).catch(e => console.log(e));
-        },
         resetModal: function(){
             this.cmd = 'store';
             this.formData = {};
+            this.id_kategori=0;
+            this.nama_kategori=false;
             this.disabled = false;
+            
         },
-        onSubmit: function(){
-            let url = 'api/barang/'+this.cmd;
-            axios.post(url, this.formData).then(response => {
-                if(response.data.class == 'success'){
-                    Bus.$emit('sweetAlert', response.data);
-                    Bus.$emit('refreshData');
-                    this.show=false;
-                    this.resetModal;
-                }else{
-                    Bus.$emit('sweetAlert', response.data);
+        formModal: function(data){
+            if(data[1] == 'delete'){
+                this.delData(data[0]);
+            }
+            let url = 'api/barang/show/'+data[0];
+            axios.get(url).then(response => {
+                if(response.data){
+                    if(data[1] == 'edit'){
+                        this.cmd = 'update';
+                        this.formData = response.data;
+                        this.id_kategori=response.data.id_kategori;
+                    }
                 }
             }).catch(e => console.log(e));
         },
@@ -122,17 +130,34 @@ export default {
                 }
             })
         },
-        formModal: function(data){
-            if(data[1] == 'delete'){
-                this.delData(data[0]);
-            }
-            let url = 'api/barang/show/'+data[0];
+        onSubmit: function(){
+            Object.assign(this.formData,{id_kategori:this.id_kategori});
+            let url = 'api/barang/'+this.cmd;
+            axios.post(url, this.formData).then(response => {
+                if(response.data.class == 'success'){
+                    Bus.$emit('sweetAlert', response.data);
+                    Bus.$emit('refreshData');
+                    this.show=false;
+                    this.resetModal;
+                }else{
+                    Bus.$emit('sweetAlert', response.data);
+                }
+            }).catch(e => console.log(e));
+        },
+        getKategori: function(){
+            let url = 'api/barang/getKategori';
             axios.get(url).then(response => {
-                if(response.data){
-                    if(data[1] == 'edit'){
-                        this.cmd = 'update';
-                        this.formData = response.data;
-                    }
+                if(response.data !=='empty'){
+                    this.options = response.data;
+                }
+            }).catch(e => console.log(e));
+        },
+        getKategoriById: function(){
+            let url = 'api/barang/getKategoriById/'+this.id_kategori;
+            axios.get(url).then(response => {
+                this.nama_kategori=false;
+                if(response.data.nama !== 'Mobil'){
+                    this.nama_kategori = true;
                 }
             }).catch(e => console.log(e));
         },
@@ -147,6 +172,13 @@ export default {
     },
     created: function () {
         Bus.$on('formModal', this.formModal);
+    },
+    watch: {
+        id_kategori: function () {
+            if(this.id_kategori > 0){
+                this.getKategoriById()
+            }
+        }
     }
 }
 </script>

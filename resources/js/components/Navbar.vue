@@ -63,24 +63,18 @@
                             </ul>
                         </li>  
                         </template>
-                        <li class="nav-item has-treeview">
-                            <a href="" class="nav-link">
-                            <i class="nav-icon fas fa-sitemap"></i>
-                                <p>
-                                    Transaksi
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon fas fa-cubes"></i> 
-                                            <p>Peminjaman</p>
-                                    </a>
-                                        
-                                </li>
-                            </ul>
-                        </li>  
+                        <li class="nav-item">
+                            <router-link :to="{ name: 'peminjaman' }" class="nav-link">
+                                <i class="nav-icon fas fa-database"></i> 
+                                    <p>Peminjaman</p>
+                            </router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link :to="{ name: 'cek_peminjaman' }" class="nav-link">
+                                <i class="nav-icon fas fa-check"></i> 
+                                    <p>Check Peminjaman</p>
+                            </router-link>
+                        </li>
                         <template v-if="role == 'admin'">
                             <li class="nav-header">EXAMPLES</li>
                             <li class="nav-item">
@@ -107,9 +101,9 @@ export default {
     name :'Navbar',
     data () {
         return {
-            name: localStorage.getItem('name'),
-            role: localStorage.getItem('role'),
-            token: localStorage.getItem('token')
+            name: $cookies.get('name'),
+            role: $cookies.get('role'),
+            token: $cookies.get('token')
         }
     },
     methods:{
@@ -122,10 +116,15 @@ export default {
             axios.post('/api/logout', {}, config)
                 .then((response) => {
                     Bus.$emit('sweetAlert', response.data);
-                    localStorage.removeItem('token');
+                    // localStorage.removeItem('token');
+                    $cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
                     this.$router.push({path: '/'});
                 }).catch(e => console.log(e))
             },
     },
+    created:function(){
+        axios.defaults.headers.common['Content-Type'] = 'application/json';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + $cookies.get('token');
+    }
 }
 </script>

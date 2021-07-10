@@ -10,13 +10,13 @@ import App from './components/App.vue';
 import VueSweetalert2 from 'vue-sweetalert2'; 
 import 'sweetalert2/dist/sweetalert2.min.css';
 import router from './router';
-// import vClickOutside from 'v-click-outside';
- import BootstrapVue from 'bootstrap-vue';
+import cookies from 'vue-cookies';
+import BootstrapVue from 'bootstrap-vue';
 Vue.component('pagination', require('laravel-vue-pagination')); 
 Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
-// Vue.use(vClickOutside)
+Vue.use(cookies)
 
 
 Vue.config.productionTip = false

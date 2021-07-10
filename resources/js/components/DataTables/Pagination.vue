@@ -49,6 +49,7 @@ export default {
                 var data = this.isSearchPage;
             }else{
                 var data = Math.floor(this.totalPage / this.isPage);
+                if (this.totalPage % this.isPage > 0) {data++;}
             }
             return data;
         }

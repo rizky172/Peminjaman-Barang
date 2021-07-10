@@ -14,6 +14,7 @@ use App\User;
 use App\Mail\VerifyEmail;
 use Crypt;
 use Mail;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
@@ -41,7 +42,7 @@ class AuthController extends Controller
                         $dataLog->account_id    = $user->account_id;
                         $dataLog->last_login    = date("Y-m-d H:i:s");
                         $dataLog->save();
-
+                        
                         session([
                             'id'            => $user->id,
                             'account_id'    => $user->account_id,

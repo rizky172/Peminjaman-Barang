@@ -17,5 +17,5 @@ Auth::routes(['verify' => true]);
 
 Route::get('/{any}', function () {
     return view('layouts.app');
-})->where('any', '.*'); 
+})->where('any', '^(?!api\/)[\/\w\.-]*');
 

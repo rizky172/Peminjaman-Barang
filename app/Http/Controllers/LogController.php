@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\LogModel;
-
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 class LogController extends Controller
 {
     

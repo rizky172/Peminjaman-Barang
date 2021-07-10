@@ -28,6 +28,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
+                                    <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr style="text-align:center">
@@ -65,6 +66,7 @@
                                             </template>
                                         </tbody>
                                     </table>
+                                    </div>
                                 </div>
                                 <div class="card-footer clearfix">
                                     <ItemPerPage></ItemPerPage>
@@ -144,6 +146,26 @@ export default {
         },
     },
     methods: {
+        formModal:function(id, cmd){
+            let data = [id,cmd]
+            Bus.$emit('formModal', data)
+        },
+        setItemPerPage: function(data){
+            this.itemPerPage = data['itemPerPage'];
+            this.isPage = data['isPage'];
+        },
+        setScroll: function(data){
+            this.isScroll = data;
+        },
+        currentPage: function(data){
+            this.isCurrentPage = data;
+        },
+        pageNext: function(data){
+            this.isPageNext = data;
+        },
+        pageOld: function(data){
+            this.isPageOld = data;
+        },
         getCount: function(){
             let url = 'api/kategori/count';
             axios.get(url).then(response => {
@@ -165,26 +187,6 @@ export default {
                 }
             }).catch(e => console.log(e));
         },
-        formModal:function(id, cmd){
-            let data = [id,cmd]
-            Bus.$emit('formModal', data)
-        },
-        setItemPerPage: function(data){
-            this.itemPerPage = data['itemPerPage'];
-            this.isPage = data['isPage'];
-        },
-        setScroll: function(data){
-            this.isScroll = data;
-        },
-        currentPage: function(data){
-            this.isCurrentPage = data;
-        },
-        pageNext: function(data){
-            this.isPageNext = data;
-        },
-        pageOld: function(data){
-            this.isPageOld = data;
-        }
     },
     created: function () {
         Bus.$on('refreshData', this.getData);

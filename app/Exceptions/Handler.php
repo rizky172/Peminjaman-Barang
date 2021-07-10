@@ -50,6 +50,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        // return redirect()->action("AuthController@logout");
         return parent::render($request, $exception);
     }
 }

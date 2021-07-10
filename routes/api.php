@@ -27,66 +27,89 @@ Route::group(["prefix"=>"/"], function(){
     Route::post("/register", "AuthController@register");
 });
 
+Route::group(["prefix"=>"/profil"], function(){
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/show/{id}', 'ProfilController@show');
+        Route::post('/update', 'ProfilController@update');
+        Route::post('/change', 'ProfilController@change');
+    });
+});
+
+Route::group(["prefix"=>"/log"], function(){
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'LogController@table');
+        Route::get('/count', 'LogController@count');
+    });
+});
 
 Route::group(["prefix"=>"/user"], function(){
-    Route::get('/table', 'UserController@table');
-    Route::get('/count', 'UserController@count');
-    Route::get('/show/{id}', 'UserController@show');
-    Route::get('/delete/{id}', 'UserController@delete');
-    Route::post('/store', 'UserController@store');
-    Route::post('/update', 'UserController@update');
-    Route::post('/change', 'UserController@change');
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'UserController@table');
+        Route::get('/count', 'UserController@count');
+        Route::get('/show/{id}', 'UserController@show');
+        Route::get('/delete/{id}', 'UserController@delete');
+        Route::post('/store', 'UserController@store');
+        Route::post('/update', 'UserController@update');
+        Route::post('/change', 'UserController@change');
+    });
 });
 
 Route::group(["prefix"=>"/pegawai"], function(){
-    Route::get('/table', 'PegawaiController@table');
-    Route::get('/count', 'PegawaiController@count');
-    Route::get('/show/{id}', 'PegawaiController@show');
-    Route::get('/delete/{id}', 'PegawaiController@delete');
-    Route::post('/store', 'PegawaiController@store');
-    Route::post('/update', 'PegawaiController@update');
-    Route::post('/change', 'PegawaiController@change');
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'PegawaiController@table');
+        Route::get('/count', 'PegawaiController@count');
+        Route::get('/show/{id}', 'PegawaiController@show');
+        Route::get('/delete/{id}', 'PegawaiController@delete');
+        Route::post('/store', 'PegawaiController@store');
+        Route::post('/update', 'PegawaiController@update');
+        Route::post('/change', 'PegawaiController@change');
+    });
 });
 
 
 Route::group(["prefix"=>"/kategori"], function(){
-    Route::get('/table', 'KategoriController@table');
-    Route::get('/count', 'KategoriController@count');
-    Route::get('/show/{id}', 'KategoriController@show');
-    Route::get('/delete/{id}', 'KategoriController@delete');
-    Route::post('/store', 'KategoriController@store');
-    Route::post('/update', 'KategoriController@update');
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'KategoriController@table');
+        Route::get('/count', 'KategoriController@count');
+        Route::get('/show/{id}', 'KategoriController@show');
+        Route::get('/delete/{id}', 'KategoriController@delete');
+        Route::post('/store', 'KategoriController@store');
+        Route::post('/update', 'KategoriController@update');
+    });
 });
 
 Route::group(["prefix"=>"/barang"], function(){
-    Route::get('/table', 'BarangController@table');
-    Route::get('/count', 'BarangController@count');
-    Route::get('/show/{id}', 'BarangController@show');
-    Route::get('/delete/{id}', 'BarangController@delete');
-    Route::get('/getKategori', 'BarangController@getKategori');
-    Route::post('/store', 'BarangController@store');
-    Route::post('/update', 'BarangController@update');
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'BarangController@table');
+        Route::get('/count', 'BarangController@count');
+        Route::get('/show/{id}', 'BarangController@show');
+        Route::get('/delete/{id}', 'BarangController@delete');
+        Route::get('/getKategori', 'BarangController@getKategori');
+        Route::get('/getKategoriById/{id}', 'BarangController@getKategoriById');
+        Route::post('/store', 'BarangController@store');
+        Route::post('/update', 'BarangController@update');
+    });
 });
 
-Route::group(["prefix"=>"/profil"], function(){
-    Route::get('/show/{id}', 'ProfilController@show');
-    Route::post('/update', 'ProfilController@update');
-    Route::post('/change', 'ProfilController@change');
+Route::group(["prefix"=>"/peminjaman"], function(){
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'PeminjamanController@table');
+        Route::get('/count', 'PeminjamanController@count');
+        Route::get('/delete/{id}', 'PeminjamanController@delete');
+        Route::post('/store', 'PeminjamanController@store');
+        Route::get('/getBarangAll', 'PeminjamanController@getBarangAll');
+    });
 });
 
-Route::group(["prefix"=>"/log"], function(){
-    Route::get('/table', 'LogController@table');
-    Route::get('/count', 'LogController@count');
-});
-
-Route::group(["prefix"=>"/pinjam"], function(){
-    Route::get('/table', 'PinjamController@table');
-    Route::get('/count', 'PinjamController@count');
-    Route::get('/show/{id}', 'PinjamController@show');
-    Route::get('/delete/{id}', 'PinjamController@delete');
-    Route::post('/store', 'PinjamController@store');
-    Route::post('/update', 'PinjamController@update');
-    Route::get('/getBarangAll', 'PinjamController@getBarangAll');
+Route::group(["prefix"=>"/cek_peminjaman"], function(){
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('/table', 'CheckPeminjamanController@table');
+        Route::get('/count', 'CheckPeminjamanController@count');
+        Route::get('/delete/{id}', 'CheckPeminjamanController@delete');
+        Route::post('/setStatus', 'CheckPeminjamanController@setStatus');
+        Route::get('/getBarangAll', 'CheckPeminjamanController@getBarangAll');
+        Route::get('/show/{id}', 'CheckPeminjamanController@show');
+    });
 });
 
 

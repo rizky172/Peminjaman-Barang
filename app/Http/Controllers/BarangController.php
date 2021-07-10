@@ -5,14 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use \App\BarangModel;
-use \App\KategoriModel;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use \App\BarangModel;
+use \App\KategoriModel;
+
 
 class BarangController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware('guest:admin')->except('count')->except('table');
+    // }
+
     public function count(){
         try {
             $response['totalRecords'] = BarangModel::count();
@@ -27,6 +35,7 @@ class BarangController extends Controller
 
     public function table(Request $request)
     {   
+
         $scroll = ((int)$request->s - 1) * 100;
         try {
             $response= DB::table('barang as b')
@@ -80,6 +89,7 @@ class BarangController extends Controller
                         $data->nama         = $request->nama;
                         $data->merk         = $request->merk;
                         $data->id_kategori  = $request->id_kategori;
+                        $data->stok         = $request->stok ? $request->stok : 0;
                         $data->created_by   = session('account_id');
                         $data->save();
                         $class = 'success';
@@ -120,10 +130,9 @@ class BarangController extends Controller
                 ->update([
                     'id_kategori'   => $request->id_kategori,
                     'nama'          => $request->nama,
-                    'stok'          => $request->stok,
-                    'harga_beli'    => $request->harga_beli,
-                    'harga_jual'    => $request->harga_jual,
-                    'updated_by'    => session('id')
+                    'stok'          => $request->stok ? $request->stok : 0,
+                    'merk'          => $request->merk,
+                    'updated_by'    => session('account_id')
                 ]);
                 $class = 'success';
                 $message = 'Data has ben Saved !';
@@ -165,6 +174,16 @@ class BarangController extends Controller
             if(sizeof($response)==0){
                 $response = array("data"=>"empty");
             }
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function getKategoriById($id)
+    {   
+        try {
+            $response= KategoriModel::find($id);
         } catch (\Exception $e) {
             $response = $e->getMessage();
         }

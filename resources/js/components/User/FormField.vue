@@ -74,23 +74,32 @@ export default {
         }
     },
     methods: {
+        formModal: function(data){
+            if(data[1] == 'delete'){
+                this.delData(data[0]);
+            }
+            let url = 'api/user/show/'+data[0];
+            axios.get(url).then(response => {
+                if(response.data){
+                    if(data[1] == 'edit'){
+                        this.cmd = 'update';
+                        this.formData = response.data;
+                    }else if(data[1] == 'detail'){
+                        this.cmd = 'detail';
+                        this.disabled = true;
+                        this.formData = response.data;
+                    }else if(data[1] == 'change'){
+                        this.cmd = 'change';
+                        this.formData = response.data;
+                        delete this.formData.password;
+                    }
+                }
+            }).catch(e => console.log(e));
+        },
         resetModal: function(){
             this.cmd = 'store';
             this.formData = {};
             this.disabled = false;
-        },
-        onSubmit: function(){
-            let url = 'api/user/'+this.cmd;
-            axios.post(url, this.formData).then(response => {
-                if(response.data.class == 'success'){
-                    Bus.$emit('sweetAlert', response.data);
-                    Bus.$emit('refreshData');
-                    this.show=false;
-                    this.resetModal;
-                }else{
-                    Bus.$emit('sweetAlert', response.data);
-                }
-            }).catch(e => console.log(e));
         },
         delData: function(id){
             this.$swal.fire({
@@ -116,28 +125,19 @@ export default {
                 }
             })
         },
-        formModal: function(data){
-            if(data[1] == 'delete'){
-                this.delData(data[0]);
-            }
-            let url = 'api/user/show/'+data[0];
-            axios.get(url).then(response => {
-                if(response.data){
-                    if(data[1] == 'edit'){
-                        this.cmd = 'update';
-                        this.formData = response.data;
-                    }else if(data[1] == 'detail'){
-                        this.cmd = 'detail';
-                        this.disabled = true;
-                        this.formData = response.data;
-                    }else if(data[1] == 'change'){
-                        this.cmd = 'change';
-                        this.formData = response.data;
-                        delete this.formData.password;
-                    }
+        onSubmit: function(){
+            let url = 'api/user/'+this.cmd;
+            axios.post(url, this.formData).then(response => {
+                if(response.data.class == 'success'){
+                    Bus.$emit('sweetAlert', response.data);
+                    Bus.$emit('refreshData');
+                    this.show=false;
+                    this.resetModal;
+                }else{
+                    Bus.$emit('sweetAlert', response.data);
                 }
             }).catch(e => console.log(e));
-        }
+        },
     },
     created: function () {
         Bus.$on('formModal', this.formModal);

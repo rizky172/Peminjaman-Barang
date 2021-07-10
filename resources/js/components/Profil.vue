@@ -216,6 +216,26 @@ export default {
         }
     },
     methods: {
+        setItemPerPage: function(data){
+            this.itemPerPage = data['itemPerPage'];
+            this.isPage = data['isPage'];
+        },
+        setScroll: function(data){
+            this.isScroll = data;
+        },
+        currentPage: function(data){
+            this.isCurrentPage = data;
+        },
+        pageNext: function(data){
+            this.isPageNext = data;
+        },
+        pageOld: function(data){
+            this.isPageOld = data;
+        },
+        formModal:function(id, cmd){
+            let data = [id,cmd]
+            Bus.$emit('formModal', data)
+        },
         getCount: function(){
             let url = 'api/log/count';
             axios.get(url).then(response => {
@@ -244,26 +264,6 @@ export default {
                     this.formData=response.data;
                 }
             }).catch(e => console.log(e));
-        },
-        setItemPerPage: function(data){
-            this.itemPerPage = data['itemPerPage'];
-            this.isPage = data['isPage'];
-        },
-        setScroll: function(data){
-            this.isScroll = data;
-        },
-        currentPage: function(data){
-            this.isCurrentPage = data;
-        },
-        pageNext: function(data){
-            this.isPageNext = data;
-        },
-        pageOld: function(data){
-            this.isPageOld = data;
-        },
-        formModal:function(id, cmd){
-            let data = [id,cmd]
-            Bus.$emit('formModal', data)
         },
     },
     created: function () {

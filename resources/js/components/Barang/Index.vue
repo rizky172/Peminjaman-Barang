@@ -28,6 +28,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
+                                    <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr style="text-align:center">
@@ -35,7 +36,7 @@
                                                 <th>Nama</th>
                                                 <th>Merk</th>
                                                 <th>Kategori</th>
-                                                <th>Gambar</th>
+                                                <th>Stok</th>
                                                 <th>Total Pinjam</th>
                                                 <th></th>
                                             </tr>
@@ -47,7 +48,7 @@
                                                     <td>{{ row.nama }}</td>
                                                     <td>{{ row.nama_kategori }}</td>
                                                     <td>{{ row.merk }}</td>
-                                                    <td>{{ row.gambar }}</td>
+                                                    <td>{{ row.stok }}</td>
                                                     <td>{{ row.total_pinjam }}</td>
                                                     <td>
                                                         <div class="input-group">
@@ -73,6 +74,7 @@
                                             </template>
                                         </tbody>
                                     </table>
+                                    </div>
                                 </div>
                                 <div class="card-footer clearfix">
                                     <ItemPerPage></ItemPerPage>
@@ -152,6 +154,26 @@ export default {
         },
     },
     methods: {
+        formModal:function(id, cmd){
+            let data = [id,cmd]
+            Bus.$emit('formModal', data)
+        },
+        setItemPerPage: function(data){
+            this.itemPerPage = data['itemPerPage'];
+            this.isPage = data['isPage'];
+        },
+        setScroll: function(data){
+            this.isScroll = data;
+        },
+        currentPage: function(data){
+            this.isCurrentPage = data;
+        },
+        pageNext: function(data){
+            this.isPageNext = data;
+        },
+        pageOld: function(data){
+            this.isPageOld = data;
+        },
         getCount: function(){
             let url = 'api/barang/count';
             axios.get(url).then(response => {
@@ -173,26 +195,7 @@ export default {
                 }
             }).catch(e => console.log(e));
         },
-        formModal:function(id, cmd){
-            let data = [id,cmd]
-            Bus.$emit('formModal', data)
-        },
-        setItemPerPage: function(data){
-            this.itemPerPage = data['itemPerPage'];
-            this.isPage = data['isPage'];
-        },
-        setScroll: function(data){
-            this.isScroll = data;
-        },
-        currentPage: function(data){
-            this.isCurrentPage = data;
-        },
-        pageNext: function(data){
-            this.isPageNext = data;
-        },
-        pageOld: function(data){
-            this.isPageOld = data;
-        }
+        
     },
     created: function () {
         Bus.$on('refreshData', this.getData);
