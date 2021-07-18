@@ -60,16 +60,6 @@
                                                                 <i class="fa fa-cog"></i> 
                                                             </button>
                                                             <div class="dropdown-menu" role="menu">
-                                                                <!-- <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'edit')">
-                                                                    <i class="fa fa-edit" ></i> Edit
-                                                                </b-button>
-                                                                <b-button class="dropdown-item" @click="formModal(row.id,'delete')">
-                                                                    <i class="fa fa-trash"></i> Delete
-                                                                </b-button> -->
-                                                                <!-- <div class="dropdown-divider"></div>
-                                                                <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'change')">
-                                                                    <i class="fa fa-key"></i> Change Password
-                                                                </b-button> -->
                                                                 <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id, 'detail')">
                                                                     <i class="fa fa-calendar"></i> Detail
                                                                 </b-button>
@@ -98,7 +88,11 @@
                 </div>
             </section>
         </div>
-        <FormField></FormField>
+        <FormField
+            :get-url="getUrl"
+            :post-url="postUrl"
+        >
+        </FormField>
     </div>
 </template>
 <script>
@@ -114,10 +108,17 @@ export default {
         Rows,
         ItemPerPage,
         Scroll,
-        Pagination
+        Pagination,
     },
     props: {
-        readonly: false
+        getUrl: {
+            type: String,
+            default: "api/pegawai/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/pegawai/"
+        },
     },
     data () {
         return {
@@ -169,7 +170,10 @@ export default {
     },
     methods: {
         formModal:function(id, cmd){
-            let data = [id,cmd]
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
             Bus.$emit('formModal', data)
         },
         setItemPerPage: function(data){
@@ -189,7 +193,7 @@ export default {
             this.isPageOld = data;
         },
         getCount: function(){
-            let url = 'api/pegawai/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -200,7 +204,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getData: function(){
-            let url = 'api/pegawai/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;

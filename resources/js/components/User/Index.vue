@@ -54,10 +54,10 @@
                                                                 <i class="fa fa-cog"></i> 
                                                             </button>
                                                             <div class="dropdown-menu" role="menu">
-                                                                <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'edit')">
+                                                                <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'update')">
                                                                     <i class="fa fa-edit" ></i> Edit
                                                                 </b-button>
-                                                                <b-button class="dropdown-item" @click="formModal(row.id,'delete')">
+                                                                <b-button class="dropdown-item" @click="delData(row.id)">
                                                                     <i class="fa fa-trash"></i> Delete
                                                                 </b-button>
                                                                 <div class="dropdown-divider"></div>
@@ -92,7 +92,12 @@
                 </div>
             </section>
         </div>
-        <FormField></FormField>
+        <FormField
+            :get-url="getUrl"
+            :post-url="postUrl"
+        >
+        </FormField>
+        <Confirm></Confirm>
     </div>
 </template>
 <script>
@@ -101,6 +106,7 @@ import Rows from './../DataTables/Rows.vue';
 import ItemPerPage from './../DataTables/ItemPerPage.vue';
 import Scroll from './../DataTables/Scroll.vue';
 import Pagination from './../DataTables/Pagination.vue';
+import Confirm from './../DataTables/Confirm.vue';
 export default {
     name:'Index',
     components: {
@@ -108,7 +114,18 @@ export default {
         Rows,
         ItemPerPage,
         Scroll,
-        Pagination
+        Pagination,
+        Confirm
+    },
+    props: {
+        getUrl: {
+            type: String,
+            default: "api/user/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/user/"
+        },
     },
     data () {
         return {
@@ -160,7 +177,10 @@ export default {
     },
     methods: {
         formModal:function(id, cmd){
-            let data = [id,cmd]
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
             Bus.$emit('formModal', data)
         },
         setItemPerPage: function(data){
@@ -179,8 +199,18 @@ export default {
         pageOld: function(data){
             this.isPageOld = data;
         },
+        delData: function(id){
+            let data = {
+                'cmd'       : 'get',
+                'url'       : this.getUrl+'delete/'+id,
+                'title'     : 'Apakah kamu yakin?',
+                'text'      : 'Jika kamu hapus, maka data tidak akan kembali lagi !',
+                'icon'      : 'warning'
+            };
+            Bus.$emit('confirm', data)
+        },
         getCount: function(){
-            let url = 'api/user/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -191,7 +221,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getData: function(){
-            let url = 'api/user/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;

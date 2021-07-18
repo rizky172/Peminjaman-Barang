@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use \App\BarangModel;
-use \App\KategoriModel;
 
 
 class BarangController extends Controller
@@ -38,11 +37,10 @@ class BarangController extends Controller
 
         $scroll = ((int)$request->s - 1) * 100;
         try {
-            $response= DB::table('barang as b')
-            ->leftJoin('kategori as k','b.id_kategori','=','k.id')
+            $response= DB::table('barang')
             ->offset($scroll)
             ->limit(100)
-            ->select('b.*','k.nama AS nama_kategori')
+            ->select('*')
             ->get();
             if(sizeof($response)==0){
                 $response = array("data"=>"empty");
@@ -55,9 +53,8 @@ class BarangController extends Controller
 
     public function rules(){
         return [
-            'nama'          => 'required',
-            'merk'          => 'required',
-            'id_kategori'   => 'required'
+            'no_plat'        => 'required',
+            'jenis'          => 'required'
         ];
     }
 
@@ -83,13 +80,11 @@ class BarangController extends Controller
             if ($validator->fails()) {
                 $message = $validator->errors()->first();
             }else{  
-                    if(BarangModel::where('nama', $request->nama)->first()){
-                        $message = "Duplicate data $request->nama !";
+                    if(BarangModel::where('no_plat', $request->no_plat)->first()){
+                        $message = "Duplicate data $request->no_plat !";
                     }else{
-                        $data->nama         = $request->nama;
-                        $data->merk         = $request->merk;
-                        $data->id_kategori  = $request->id_kategori;
-                        $data->stok         = $request->stok ? $request->stok : 0;
+                        $data->no_plat      = $request->no_plat;
+                        $data->jenis        = $request->jenis;
                         $data->created_by   = session('account_id');
                         $data->save();
                         $class = 'success';
@@ -128,10 +123,8 @@ class BarangController extends Controller
             }else{
                 $data = BarangModel::where('id',$request->id)
                 ->update([
-                    'id_kategori'   => $request->id_kategori,
-                    'nama'          => $request->nama,
-                    'stok'          => $request->stok ? $request->stok : 0,
-                    'merk'          => $request->merk,
+                    'no_plat'       => $request->no_plat,
+                    'jenis'          => $request->jenis,
                     'updated_by'    => session('account_id')
                 ]);
                 $class = 'success';
@@ -165,28 +158,5 @@ class BarangController extends Controller
             'message'   => $message,
             'data'      => $data
         ]);
-    }
-
-    public function getKategori()
-    {   
-        try {
-            $response= KategoriModel::all();
-            if(sizeof($response)==0){
-                $response = array("data"=>"empty");
-            }
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
-        }
-        return response()->json($response);
-    }
-
-    public function getKategoriById($id)
-    {   
-        try {
-            $response= KategoriModel::find($id);
-        } catch (\Exception $e) {
-            $response = $e->getMessage();
-        }
-        return response()->json($response);
     }
 }

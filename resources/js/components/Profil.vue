@@ -94,7 +94,7 @@
                                     </a>
                                 </li>
                             </ul>
-                            <b-button class="btn btn-primary btn-block" v-b-modal="'id-modal'" @click="formModal(account_id,'edit')">
+                            <b-button class="btn btn-primary btn-block" v-b-modal="'id-modal'" @click="formModal(account_id,'update')">
                                 <i class="fa fa-edit"></i> Update
                             </b-button>
                             <b-button class="btn btn-primary btn-block" v-b-modal="'id-modal'" @click="formModal(account_id,'change')">
@@ -146,7 +146,11 @@
             </div>
             </section>
         </div>
-        <FormFieldProfil></FormFieldProfil>
+        <FormFieldProfil
+            :get-url="getUrl"
+            :post-url="postUrl"
+        ></FormFieldProfil>
+        <Confirm></Confirm>
     </div>
 </template>
 <script>
@@ -155,6 +159,7 @@ import Rows from './DataTables/Rows.vue';
 import ItemPerPage from './DataTables/ItemPerPage.vue';
 import Scroll from './DataTables/Scroll.vue';
 import Pagination from './DataTables/Pagination.vue';
+import Confirm from './DataTables/Confirm.vue';
 export default {
     name :'Profil',
     components: {
@@ -162,11 +167,22 @@ export default {
         Rows,
         ItemPerPage,
         Scroll,
-        Pagination
+        Pagination,
+        Confirm
+    },
+    props: {
+        getUrl: {
+            type: String,
+            default: "api/profil/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/profil/"
+        },
     },
     data () {
         return {
-            account_id: localStorage.getItem('account_id'),
+            account_id: $cookies.get('account_id'),
             formData:{},
             table : [],
             itemPerPage : [],
@@ -233,11 +249,14 @@ export default {
             this.isPageOld = data;
         },
         formModal:function(id, cmd){
-            let data = [id,cmd]
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
             Bus.$emit('formModal', data)
         },
         getCount: function(){
-            let url = 'api/log/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -248,7 +267,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getDataLog: function(){
-            let url = 'api/log/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;
@@ -258,7 +277,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getDataProfil: function(){
-            let url = 'api/profil/show/'+this.account_id;
+            let url = this.getUrl+'show/'+this.account_id;
             axios.get(url).then(response => {
                 if(response.data){
                     this.formData=response.data;
@@ -267,7 +286,7 @@ export default {
         },
     },
     created: function () {
-        Bus.$on('refreshData', this.getDataLog);
+        Bus.$on('refreshData', this.getDataProfil);
         Bus.$on('setItemPerPage', this.setItemPerPage);
         Bus.$on('setScroll', this.setScroll);
         Bus.$on('setCurrentPage', this.currentPage);

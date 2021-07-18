@@ -5,7 +5,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Detail Peminjaman Barang</h1>
+                            <h1>Detail Peminjaman Mobil</h1>
                         </div>
                     </div>
                 </div>
@@ -31,8 +31,8 @@
                                             <tr style="text-align:center">
                                                 <th rowspan="2" style="vertical-align: middle;">No</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Pegawai</th>
-                                                <th rowspan="2" style="vertical-align: middle;">Nama</th>
-                                                <th rowspan="2" style="vertical-align: middle;">Kategori</th>
+                                                <th rowspan="2" style="vertical-align: middle;">No Plat</th>
+                                                <th rowspan="2" style="vertical-align: middle;">Jenis</th>
                                                 <th colspan="3">Tanggal</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Keperluan</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Notes</th>
@@ -50,8 +50,8 @@
                                                 <tr v-for="(row, index) in filterData" :key="row.id">
                                                     <td style="text-align:center">{{ index + 1 }}</td>
                                                     <td>{{ row.pegawai }}</td>
-                                                    <td>{{ row.nama_barang }}</td>
-                                                    <td>{{ row.nama_kategori }}</td>
+                                                    <td>{{ row.no_plat }}</td>
+                                                    <td>{{ row.jenis }}</td>
                                                     <td>{{ row.tgl_pinjam | convertDate }}</td>
                                                     <td>{{ row.tgl_kembali | convertDate }}</td>
                                                     <td>{{ row | diffDate }}</td>
@@ -68,14 +68,22 @@
                                                                 <i class="fa fa-cog"></i> 
                                                             </button>
                                                             <div class="dropdown-menu" role="menu">
-                                                                <b-button v-if="row.status != 'approved'" class="dropdown-item" @click="setStatus(row.id,'approved')">
+                                                                <b-button v-if="row.status == 'pending'" class="dropdown-item" @click="setStatus(row.id,'approved')">
                                                                     <i class="fa fa-check"></i> Approved
                                                                 </b-button>
-                                                                <b-button v-if="row.status != 'return' && row.status != 'approved'" class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'rejected')">
+                                                                <b-button v-if="row.status == 'pending'" class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'rejected')">
                                                                     <i class="fa fa-times"></i> Rejected
                                                                 </b-button>
                                                                 <b-button v-if="row.status == 'approved'" class="dropdown-item" @click="setStatus(row.id,'return')">
                                                                     <i class="fa fa-forward"></i> Return
+                                                                </b-button>
+                                                                <a target="_blank" v-bind:href="'/generatePDF/peminjaman/'+row.id"> 
+                                                                    <b-button v-if="row.status == 'approved'" class="dropdown-item">
+                                                                        <i class="fa fa-download"></i> PDF
+                                                                    </b-button>
+                                                                </a>
+                                                                <b-button class="dropdown-item" v-b-modal="'modal-history'" @click="formModal(row.id,'historyCheck')">
+                                                                    <i class="fa fa-table"></i> History
                                                                 </b-button>
                                                             </div>
                                                         </div>
@@ -84,7 +92,7 @@
                                             </template>
                                             <template v-else>
                                                 <tr style="text-align:center">
-                                                    <td colspan="10">Data Kosong</td>
+                                                    <td colspan="11">Data Kosong</td>
                                                 </tr>
                                             </template>
                                         </tbody>
@@ -102,7 +110,14 @@
                 </div>
             </section>
         </div>
-        <FormField></FormField>
+        <FormField
+            :get-url="getUrl"
+            :post-url="postUrl"
+        ></FormField>
+        <History
+            :get-url="getUrl"
+            :post-url="postUrl"
+        ></History>
     </div>
 </template>
 <script>
@@ -112,6 +127,7 @@ import ItemPerPage from './../DataTables/ItemPerPage.vue';
 import Scroll from './../DataTables/Scroll.vue';
 import Pagination from './../DataTables/Pagination.vue';
 import Badges from './../DataTables/Badges.vue';
+import History from './History.vue';
 export default {
     name:'Index',
     components: {
@@ -120,10 +136,18 @@ export default {
         ItemPerPage,
         Scroll,
         Pagination,
-        Badges
+        Badges,
+        History
     },
     props: {
-        readonly: false
+        getUrl: {
+            type: String,
+            default: "api/cek_peminjaman/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/cek_peminjaman/"
+        },
     },
     data () {
         return {
@@ -164,11 +188,12 @@ export default {
             return result;
         },
         diffDate: function (data) {
+            var date = new Date();
             var tgl_pinjam  = new Date(data.tgl_pinjam);
             var tgl_kembali = new Date(data.tgl_kembali);
             var timeDiff    = Math.abs(tgl_kembali.getTime() - tgl_pinjam.getTime());
             var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-
+            
             if(diffDays == 0){
                 var result = 'Sudah habis';
             }else{
@@ -204,10 +229,29 @@ export default {
             Bus.$emit('setEntry', this.entry);
             return data;
         },
+        convertDate2: function(data){
+            var date = new Date(data);
+            var arrbulan = [
+                "Januari","Februari","Maret",
+                "April","Mei","Juni","Juli",
+                "Agustus","September","Oktober",
+                "November","Desember"
+            ];
+
+            var tanggal = date.getDate();
+            var bulan   = date.getMonth();
+            var tahun   = date.getFullYear();
+            var result  = tanggal+"-"+arrbulan[bulan]+"-"+tahun;
+            
+            return result;
+        },
     },
     methods: {
         formModal:function(id, cmd){
-            let data = [id,cmd]
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
             Bus.$emit('formModal', data)
         },
         setItemPerPage: function(data){
@@ -227,7 +271,7 @@ export default {
             this.isPageOld = data;
         },
         getCount: function(){
-            let url = 'api/cek_peminjaman/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -238,7 +282,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getData: function(){
-            let url = 'api/cek_peminjaman/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;
@@ -252,7 +296,7 @@ export default {
                 'id'        : id,
                 'status'    : status
             };
-            let url = 'api/cek_peminjaman/setStatus';
+            let url = this.postUrl+'setStatus';
             axios.post(url, data).then(response => {
                 if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);

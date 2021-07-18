@@ -32,13 +32,9 @@ Route::group(["prefix"=>"/profil"], function(){
         Route::get('/show/{id}', 'ProfilController@show');
         Route::post('/update', 'ProfilController@update');
         Route::post('/change', 'ProfilController@change');
-    });
-});
 
-Route::group(["prefix"=>"/log"], function(){
-    Route::group(['middleware' => 'auth:api'], function(){
-        Route::get('/table', 'LogController@table');
-        Route::get('/count', 'LogController@count');
+        Route::get('/table', 'ProfilController@table');
+        Route::get('/count', 'ProfilController@count');
     });
 });
 
@@ -67,25 +63,12 @@ Route::group(["prefix"=>"/pegawai"], function(){
 });
 
 
-Route::group(["prefix"=>"/kategori"], function(){
-    Route::group(['middleware' => 'auth:api'], function(){
-        Route::get('/table', 'KategoriController@table');
-        Route::get('/count', 'KategoriController@count');
-        Route::get('/show/{id}', 'KategoriController@show');
-        Route::get('/delete/{id}', 'KategoriController@delete');
-        Route::post('/store', 'KategoriController@store');
-        Route::post('/update', 'KategoriController@update');
-    });
-});
-
 Route::group(["prefix"=>"/barang"], function(){
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('/table', 'BarangController@table');
         Route::get('/count', 'BarangController@count');
         Route::get('/show/{id}', 'BarangController@show');
         Route::get('/delete/{id}', 'BarangController@delete');
-        Route::get('/getKategori', 'BarangController@getKategori');
-        Route::get('/getKategoriById/{id}', 'BarangController@getKategoriById');
         Route::post('/store', 'BarangController@store');
         Route::post('/update', 'BarangController@update');
     });
@@ -98,6 +81,9 @@ Route::group(["prefix"=>"/peminjaman"], function(){
         Route::get('/delete/{id}', 'PeminjamanController@delete');
         Route::post('/store', 'PeminjamanController@store');
         Route::get('/getBarangAll', 'PeminjamanController@getBarangAll');
+
+        Route::post('/getHistoryById', 'PeminjamanController@getHistoryById');
+        Route::get('/countHistory/{id}', 'PeminjamanController@countHistory');
     });
 });
 
@@ -106,12 +92,14 @@ Route::group(["prefix"=>"/cek_peminjaman"], function(){
         Route::get('/table', 'CheckPeminjamanController@table');
         Route::get('/count', 'CheckPeminjamanController@count');
         Route::get('/delete/{id}', 'CheckPeminjamanController@delete');
-        Route::post('/setStatus', 'CheckPeminjamanController@setStatus');
         Route::get('/getBarangAll', 'CheckPeminjamanController@getBarangAll');
         Route::get('/show/{id}', 'CheckPeminjamanController@show');
+        Route::post('/setStatus', 'CheckPeminjamanController@setStatus');
+
+        Route::post('/getHistoryById', 'CheckPeminjamanController@getHistoryById');
+        Route::get('/countHistory/{id}', 'CheckPeminjamanController@countHistory');
+        Route::get('/generatePDF/{id}', 'CheckPeminjamanController@generatePDF');
     });
 });
-
-
 
 

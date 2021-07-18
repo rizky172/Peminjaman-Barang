@@ -34,6 +34,10 @@
 <script>
 export default {
     name: 'FormField',
+    props: {
+        getUrl: String,
+        postUrl: String
+    },
     data (){
         return {
             formData: {},
@@ -46,20 +50,20 @@ export default {
     },
     methods: {
         formModal: function(data){
-            let url = 'api/cek_peminjaman/show/'+data[0];
-            axios.get(url).then(response => {
-                if(response.data){
-                    this.cmd = 'setStatus';
-                    this.id = response.data.id;
-                    // this.formData = response.data;
-                }
-            }).catch(e => console.log(e));
+            if(data.cmd == 'rejected'){
+                let url = this.getUrl+'show/'+data.id;
+                axios.get(url).then(response => {
+                    if(response.data){
+                        this.cmd = 'setStatus';
+                        this.id = response.data.id;
+                    }
+                }).catch(e => console.log(e));
+            }
         },
         resetModal: function(){
             this.cmd = 'store';
             this.id=0;
             this.notes='';
-            // this.formData = {};
             this.disabled = false;
         },
         onSubmit: function(){
@@ -68,7 +72,7 @@ export default {
                 'notes'     : this.notes,
                 'status'    : 'rejected'
             };
-            let url = 'api/cek_peminjaman/'+this.cmd;
+            let url = this.postUrl+this.cmd;
             axios.post(url, data).then(response => {
                 if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);

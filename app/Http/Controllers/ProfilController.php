@@ -14,6 +14,35 @@ use \App\LogModel;
 class ProfilController extends Controller
 {
 
+    public function count(){
+        try {
+            $response['totalRecords'] = LogModel::count();
+            if($response == 0){
+                $response = array("totalRecords"=>"0");
+            }
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function table(Request $request)
+    {   
+        $scroll = ((int)$request->s - 1) * 100;
+        try {
+            $response= LogModel::select('*')
+            ->offset($scroll)
+            ->limit(100)
+            ->get();
+            if(sizeof($response)==0){
+                $response = array("data"=>"empty");
+            }
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    
     public function rules(){
         return [
             'nip'           => 'required',
@@ -66,9 +95,8 @@ class ProfilController extends Controller
                     if($cekPegawai){
                         $data = UserModel::where('account_id',$cekPegawai->account_id)
                         ->update([
-                            'nama'          => $request->name,
-                            'email'         => $request->email,
-                            'updated_by'    => session('account_id')
+                            'name'          => $request->nama,
+                            'email'         => $request->email
                         ]);
                         $class = 'success';
                         $message = 'Data has ben Saved !';

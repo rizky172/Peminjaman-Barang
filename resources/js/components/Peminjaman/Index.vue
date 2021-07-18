@@ -5,7 +5,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Data Peminjaman Barang</h1>
+                            <h1>Data Peminjaman Mobil</h1>
                         </div>
                     </div>
                 </div>
@@ -16,31 +16,31 @@
                         <div class="col-md-12">
                             <div class="card card-info">
                                 <div class="card-header">
-                                    <h3 class="card-title">Form Peminjaman Barang</h3>
+                                    <h3 class="card-title">Form Peminjaman Mobil</h3>
                                 </div>
                                 <div class="card-body">
                                     <form role="form" @submit.prevent="onSubmit">
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label>Barang</label>
+                                                    <label>Mobil</label>
                                                     <select class="form-control" v-model="barang_id" required>
-                                                        <option v-for="row in optionsBarang" v-bind:value="row.id">
-                                                            {{ row.nama }}
+                                                        <option v-for="row in options" v-bind:value="row.id">
+                                                            {{ row.jenis }}
                                                         </option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label>Merk</label>
-                                                    <input type="text" class="form-control" v-model="merk" disabled>
+                                                    <label>No Plat</label>
+                                                    <input type="text" class="form-control" v-model="no_plat" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label>Kategori</label>
-                                                    <input type="text" class="form-control" v-model="kategori" disabled>
+                                                    <label>Keperluan</label>
+                                                    <input type="text" class="form-control" v-model="formData.keperluan" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -59,14 +59,7 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label>Keperluan</label>
-                                                    <input type="text" class="form-control" v-model="formData.keperluan" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-2">
-                                                <div class="form-group">
+                                                    <label for=""></label>
                                                     <b-button type="submit" class="form-control btn btn-success">
                                                         <i class="fa fa-save"></i> Simpan
                                                     </b-button>
@@ -95,8 +88,8 @@
                                         <thead>
                                             <tr style="text-align:center">
                                                 <th rowspan="2" style="vertical-align: middle;">No</th>
-                                                <th rowspan="2" style="vertical-align: middle;">Nama</th>
-                                                <th rowspan="2" style="vertical-align: middle;">Kategori</th>
+                                                <th rowspan="2" style="vertical-align: middle;">No Plat</th>
+                                                <th rowspan="2" style="vertical-align: middle;">Jenis</th>
                                                 <th colspan="3">Tanggal</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Keperluan</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Notes</th>
@@ -113,11 +106,11 @@
                                             <template v-if="table.length > 0">
                                                 <tr v-for="(row, index) in filterData" :key="row.id">
                                                     <td style="text-align:center">{{ index + 1 }}</td>
-                                                    <td>{{ row.nama_barang }}</td>
-                                                    <td>{{ row.nama_kategori }}</td>
-                                                    <td>{{ row.tgl_pinjam }}</td>
-                                                    <td>{{ row.tgl_kembali }}</td>
-                                                    <td>{{ row.tgl_kembali }}</td>
+                                                    <td>{{ row.no_plat }}</td>
+                                                    <td>{{ row.jenis }}</td>
+                                                    <td>{{ row.tgl_pinjam | convertDate }}</td>
+                                                    <td>{{ row.tgl_kembali | convertDate }}</td>
+                                                    <td>{{ row | diffDate }}</td>
                                                     <td>{{ row.keperluan }}</td>
                                                     <td>{{ row.notes }}</td>
                                                     <td>
@@ -131,12 +124,12 @@
                                                                 <i class="fa fa-cog"></i> 
                                                             </button>
                                                             <div class="dropdown-menu" role="menu">
-                                                                <b-button class="dropdown-item" @click="delData(row.id)">
+                                                                <b-button v-if="row.status == 'pending'" class="dropdown-item" @click="delData(row.id)">
                                                                     <i class="fa fa-trash"></i> Delete
                                                                 </b-button>
-                                                                <!-- <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id, 'detail')">
-                                                                    <i class="fa fa-calendar"></i> Detail
-                                                                </b-button> -->
+                                                                <b-button class="dropdown-item" v-b-modal="'modal-history'" @click="formModal(row.id,'history')">
+                                                                    <i class="fa fa-table"></i> History
+                                                                </b-button>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -162,6 +155,11 @@
                 </div>
             </section>
         </div>
+        <History
+            :get-url="getUrl"
+            :post-url="postUrl"
+        ></History>
+        <Confirm></Confirm>
     </div>
 </template>
 <script>
@@ -170,6 +168,8 @@ import ItemPerPage from './../DataTables/ItemPerPage.vue';
 import Scroll from './../DataTables/Scroll.vue';
 import Pagination from './../DataTables/Pagination.vue';
 import Badges from './../DataTables/Badges.vue';
+import Confirm from './../DataTables/Confirm.vue';
+import History from './History.vue';
 export default {
     name:'Index',
     components: {
@@ -177,10 +177,19 @@ export default {
         ItemPerPage,
         Scroll,
         Pagination,
-        Badges
+        Badges,
+        History,
+        Confirm
     },
     props: {
-        readonly: false
+        getUrl: {
+            type: String,
+            default: "api/peminjaman/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/peminjaman/"
+        },
     },
     data () {
         return {
@@ -196,10 +205,9 @@ export default {
             isCurrentPage: 1,
             isPageNext: 0,
             isPageOld: 10,
-            optionsBarang:{},
+            options:{},
             barang_id:0,
-            merk: '',
-            kategori:'',
+            no_plat: '',
             formData:{}
         }
     },
@@ -207,6 +215,37 @@ export default {
         this.getData();
         this.getDataBarang();
         this.getCount();
+    },
+    filters: {
+        convertDate: function(data){
+            var date = new Date(data);
+            var arrbulan = [
+                "Januari","Februari","Maret",
+                "April","Mei","Juni","Juli",
+                "Agustus","September","Oktober",
+                "November","Desember"
+            ];
+
+            var tanggal = date.getDate();
+            var bulan   = date.getMonth();
+            var tahun   = date.getFullYear();
+            var result  = tanggal+"-"+arrbulan[bulan]+"-"+tahun;
+            
+            return result;
+        },
+        diffDate: function (data) {
+            var tgl_pinjam  = new Date(data.tgl_pinjam);
+            var tgl_kembali = new Date(data.tgl_kembali);
+            var timeDiff    = Math.abs(tgl_kembali.getTime() - tgl_pinjam.getTime());
+            var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+
+            if(diffDays == 0){
+                var result = 'Sudah habis';
+            }else{
+                var result = diffDays;
+            }
+            return result;
+        }
     },
     computed:{
         filterData: function(){
@@ -237,6 +276,13 @@ export default {
         },
     },
     methods: {
+        formModal:function(id, cmd){
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
+            Bus.$emit('formModal', data)
+        },
         setItemPerPage: function(data){
             this.itemPerPage = data['itemPerPage'];
             this.isPage = data['isPage'];
@@ -254,7 +300,7 @@ export default {
             this.isPageOld = data;
         },
         getCount: function(){
-            let url = 'api/peminjaman/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -265,60 +311,44 @@ export default {
             }).catch(e => console.log(e));
         },
         getData: function(){
-            let url = 'api/peminjaman/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;
                     this.table = response.data;
+                    this.getDataBarang();
                     Bus.$emit('setTotalPage', this.totalPage);
                 }
             }).catch(e => console.log(e));
         },
         getDataBarang: function(){
-            let url = 'api/peminjaman/getBarangAll';
+            let url = this.getUrl+'getBarangAll';
             axios.get(url).then(response => {
                 if(response.data !=='empty'){
-                    this.optionsBarang = response.data;
+                    this.options = response.data;
                 }
             }).catch(e => console.log(e));
         },
         delData: function(id){
-            this.$swal.fire({
-                title: 'Apakah kamu yakin?',
-                text: "Jika kamu hapus, maka data tidak akan kembali lagi.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
-                }).then((result) => {
-                if (result.value) {
-                    let url = 'api/peminjaman/delete/'+id;
-                    axios.get(url).then(response => {
-                        if(response.data.class == 'success'){
-                            Bus.$emit('sweetAlert', response.data);
-                            // Bus.$emit('refreshData');
-                            this.getData();
-                        }else{
-                            Bus.$emit('sweetAlert', response.data);
-                        }
-                    }).catch(e => console.log(e));
-                }
-            })
+            let data = {
+                'cmd'       : 'get',
+                'url'       : this.getUrl+'delete/'+id,
+                'title'     : 'Apakah kamu yakin?',
+                'text'      : 'Jika kamu hapus, maka data tidak akan kembali lagi !',
+                'icon'      : 'warning'
+            };
+            Bus.$emit('confirm', data)
         },
         onSubmit: function(){
             Object.assign(this.formData,{barang_id:this.barang_id});
-            let url = 'api/peminjaman/store';
+            let url = this.postUrl+'store';
             axios.post(url, this.formData).then(response => {
                 if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);
                     this.formData={};
                     this.barang_id=0;
-                    this.merk='';
-                    this.kategori='';
+                    this.no_plat='';
                     this.getData();
-                    
                 }else{
                     Bus.$emit('sweetAlert', response.data);
                 }
@@ -339,10 +369,9 @@ export default {
         },
         barang_id: function(){
             if(this.barang_id > 0){
-                let barang      = this.optionsBarang.find(e => e.id == this.barang_id);
+                let barang      = this.options.find(e => e.id == this.barang_id);
                 if(barang){
-                    this.merk       = barang.merk;
-                    this.kategori   = barang.nama_kategori;
+                    this.no_plat       = barang.no_plat;
                 }
             }
         }

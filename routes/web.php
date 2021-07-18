@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['verify' => true]);
 
+// route khusus untuk generate/download PDF
+Route::group(["prefix"=>"/generatePDF"], function(){
+    Route::get('/peminjaman/{id}', 'GeneratePDF@peminjaman');
+});
+
+
 Route::get('/{any}', function () {
     return view('layouts.app');
 })->where('any', '^(?!api\/)[\/\w\.-]*');

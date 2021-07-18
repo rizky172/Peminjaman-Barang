@@ -5,7 +5,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Barang <span class="nav-icon fas fa-cubes"></span></h1>
+                            <h1>Data Mobil <span class="nav-icon fas fa-car"></span></h1>
                         </div>
                     </div>
                 </div>
@@ -33,11 +33,8 @@
                                         <thead>
                                             <tr style="text-align:center">
                                                 <th>No</th>
-                                                <th>Nama</th>
-                                                <th>Merk</th>
-                                                <th>Kategori</th>
-                                                <th>Stok</th>
-                                                <th>Total Pinjam</th>
+                                                <th>No Plat</th>
+                                                <th>Jenis</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -45,21 +42,18 @@
                                             <template v-if="table.length > 0">
                                                 <tr v-for="(row, index) in filterData" :key="row.id">
                                                     <td style="text-align:center">{{ index + 1 }}</td>
-                                                    <td>{{ row.nama }}</td>
-                                                    <td>{{ row.nama_kategori }}</td>
-                                                    <td>{{ row.merk }}</td>
-                                                    <td>{{ row.stok }}</td>
-                                                    <td>{{ row.total_pinjam }}</td>
+                                                    <td>{{ row.no_plat }}</td>
+                                                    <td>{{ row.jenis }}</td>
                                                     <td>
                                                         <div class="input-group">
                                                             <button style="margin:auto" type="button" class="btn btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                                 <i class="fa fa-cog"></i> 
                                                             </button>
                                                             <div class="dropdown-menu" role="menu">
-                                                                <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'edit')">
+                                                                <b-button class="dropdown-item" v-b-modal="'id-modal'" @click="formModal(row.id,'update')">
                                                                     <i class="fa fa-edit" ></i> Edit
                                                                 </b-button>
-                                                                <b-button class="dropdown-item" @click="formModal(row.id,'delete')">
+                                                                <b-button class="dropdown-item" @click="delData(row.id)">
                                                                     <i class="fa fa-trash"></i> Delete
                                                                 </b-button>
                                                             </div>
@@ -69,7 +63,7 @@
                                             </template>
                                             <template v-else>
                                                 <tr style="text-align:center">
-                                                    <td colspan="7">Data Kosong</td>
+                                                    <td colspan="4">Data Kosong</td>
                                                 </tr>
                                             </template>
                                         </tbody>
@@ -87,7 +81,11 @@
                 </div>
             </section>
         </div>
-        <FormField></FormField>
+        <FormField
+            :get-url="getUrl"
+            :post-url="postUrl"
+        ></FormField>
+        <Confirm></Confirm>
     </div>
 </template>
 <script>
@@ -96,6 +94,7 @@ import Rows from './../DataTables/Rows.vue';
 import ItemPerPage from './../DataTables/ItemPerPage.vue';
 import Scroll from './../DataTables/Scroll.vue';
 import Pagination from './../DataTables/Pagination.vue';
+import Confirm from './../DataTables/Confirm.vue';
 export default {
     name:'Index',
     components: {
@@ -103,7 +102,18 @@ export default {
         Rows,
         ItemPerPage,
         Scroll,
-        Pagination
+        Pagination,
+        Confirm
+    },
+    props: {
+        getUrl: {
+            type: String,
+            default: "api/barang/"
+        },
+        postUrl: {
+            type: String,
+            default: "api/barang/"
+        },
     },
     data () {
         return {
@@ -155,7 +165,10 @@ export default {
     },
     methods: {
         formModal:function(id, cmd){
-            let data = [id,cmd]
+            let data = {
+                'id'    : id,
+                'cmd'   : cmd
+            };
             Bus.$emit('formModal', data)
         },
         setItemPerPage: function(data){
@@ -174,8 +187,18 @@ export default {
         pageOld: function(data){
             this.isPageOld = data;
         },
+        delData: function(id){
+            let data = {
+                'cmd'       : 'get',
+                'url'       : this.getUrl+'delete/'+id,
+                'title'     : 'Apakah kamu yakin?',
+                'text'      : 'Jika kamu hapus, maka data tidak akan kembali lagi !',
+                'icon'      : 'warning'
+            };
+            Bus.$emit('confirm', data)
+        },
         getCount: function(){
-            let url = 'api/barang/count';
+            let url = this.getUrl+'count';
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalRecords = response.data.totalRecords;
@@ -186,7 +209,7 @@ export default {
             }).catch(e => console.log(e));
         },
         getData: function(){
-            let url = 'api/barang/table?s='+this.isScroll;
+            let url = this.getUrl+'table?s='+this.isScroll;
             axios.get(url).then(response => {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;

@@ -118,6 +118,10 @@
 <script>
 export default {
     name: 'FormFieldProfil',
+    props: {
+        getUrl: String,
+        postUrl: String
+    },
     data (){
         return {
             formData: {},
@@ -133,7 +137,7 @@ export default {
             this.disabled = false;
         },
         onSubmit: function(){
-            let url = 'api/profil/'+this.cmd;
+            let url = this.postUrl+this.cmd;
             axios.post(url, this.formData).then(response => {
                 if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);
@@ -145,46 +149,15 @@ export default {
                 }
             }).catch(e => console.log(e));
         },
-        delData: function(id){
-            this.$swal.fire({
-                title: 'Apakah kamu yakin?',
-                text: "Jika kamu hapus, maka data tidak akan kembali lagi.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
-                }).then((result) => {
-                if (result.value) {
-                    let url = 'api/profil/delete/'+id;
-                    axios.get(url).then(response => {
-                        if(response.data.class == 'success'){
-                            Bus.$emit('sweetAlert', response.data);
-                            Bus.$emit('refreshData');
-                        }else{
-                            Bus.$emit('sweetAlert', response.data);
-                        }
-                    }).catch(e => console.log(e));
-                }
-            })
-        },
         formModal: function(data){
-            if(data[1] == 'delete'){
-                this.delData(data[0]);
-            }
-            let url = 'api/profil/show/'+data[0];
+            let url = this.getUrl+'show/'+data.id;
             axios.get(url).then(response => {
                 if(response.data){
-                    if(data[1] == 'edit'){
-                        this.cmd = 'update';
+                    if(data.cmd == 'update'){
+                        this.cmd = data.cmd;
                         this.formData = response.data;
-                    }else if(data[1] == 'detail'){
-                        this.cmd = 'detail';
-                        this.disabled = true;
-                        this.formData = response.data;
-                    }else if(data[1] == 'change'){
-                        this.cmd = 'change';
+                    }else if(data.cmd == 'change'){
+                        this.cmd = data.cmd;
                         this.formData = response.data;
                         delete this.formData.password;
                     }

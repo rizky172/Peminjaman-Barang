@@ -25,7 +25,7 @@
         </nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-6">
             <a href="/" class="brand-link">
-                <span class="brand-text font-weight-light">Peminjaman Barang</span>
+                <span class="brand-text font-weight-light">SIRODA</span>
             </a>
             <div class="sidebar">
                 <nav class="mt-2">
@@ -37,31 +37,12 @@
                             </router-link>
                         </li>
                         <template v-if="role == 'admin'">
-                            <li class="nav-item has-treeview">
-                            <a href="" class="nav-link">
-                            <i class="nav-icon fas fa-sitemap"></i>
-                                <p>
-                                    Master
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <router-link :to="{ name: 'barang' }" class="nav-link">
-                                        <i class="nav-icon fas fa-cubes"></i> 
-                                            <p>Barang</p>
-                                    </router-link>
-                                </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <router-link :to="{ name: 'kategori' }" class="nav-link">
-                                        <i class="nav-icon fas fa-cubes"></i> 
-                                            <p>Kategori</p>
-                                    </router-link>
-                                </li>
-                            </ul>
-                        </li>  
+                        <li class="nav-item">
+                            <router-link :to="{ name: 'barang' }" class="nav-link">
+                                <i class="nav-icon fas fa-car"></i> 
+                                    <p>Mobil</p>
+                            </router-link>
+                        </li>
                         </template>
                         <li class="nav-item">
                             <router-link :to="{ name: 'peminjaman' }" class="nav-link">

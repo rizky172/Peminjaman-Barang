@@ -5,7 +5,6 @@ import Eror404 from './components/Error404.vue';
 import Register from './components/Register.vue';
 import Home from './components/Home.vue';
 import User from './components/User/Index.vue';
-import Kategori from './components/Kategori/Index.vue';
 import Barang from './components/Barang/Index.vue';
 import Pegawai from './components/Pegawai/Index.vue';
 import Profil from './components/Profil.vue';
@@ -54,14 +53,6 @@ const router = new Router({
       name:'pegawai',
       path:'/pegawai',
       component: Pegawai,
-      meta: {
-        auth: true
-      },
-    },
-    {
-      name:'kategori',
-      path:'/kategori',
-      component: Kategori,
       meta: {
         auth: true
       },
