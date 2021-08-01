@@ -23,14 +23,14 @@ class AuthController extends Controller
     public function rules(){
         return [
             'name'              => 'required',
-            'email'             => 'required|email',
+            'nip'               => 'required',
             'password'          => 'required',
             'retype_password'   => 'required'
         ];
     }
 
     function login(Request $request){
-        $user = User::where('email', '=', $request->email)->first();
+        $user = User::where('nip', '=', $request->nip)->first();
         $class = "error";
         $message = "";
         $data = null;
@@ -63,7 +63,7 @@ class AuthController extends Controller
                 }       
             }
             else{
-                $message = "Email Wrong !";
+                $message = "NIP Wrong !";
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();
@@ -88,8 +88,8 @@ class AuthController extends Controller
             }else{
                 if($request->password != $request->retype_password){
                     $message = 'Password tidak sama !';
-                }else if($user = User::where('email', '=', $request->email)->first()){
-                    $message = 'Email sudah digunakan !';
+                }else if($user = User::where('nip', '=', $request->nip)->first()){
+                    $message = 'NIP sudah digunakan !';
                 }else{
                     do {
                         // random number for 4 digit
@@ -100,7 +100,7 @@ class AuthController extends Controller
                     $data =  new UserModel();
                     $data->account_id   = $account_id;
                     $data->name         = $request->name;
-                    $data->email        = $request->email;
+                    $data->nip        = $request->nip;
                     $data->password     = Hash::make($request->password);
                     $data->role         = 'member';
                     $data->status       = 'actived';
@@ -112,7 +112,7 @@ class AuthController extends Controller
                             $dataPegawai =  new PegawaiModel();
                             $dataPegawai->account_id   = $cekUser->account_id;
                             $dataPegawai->nama         = $cekUser->name;
-                            $dataPegawai->email        = $cekUser->email;
+                            $dataPegawai->nip          = $cekUser->nip;
                             $dataPegawai->created_by   = $cekUser->account_id;
                             $dataPegawai->save();
                             $class = 'success';

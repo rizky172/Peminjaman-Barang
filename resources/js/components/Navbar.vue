@@ -38,7 +38,7 @@
                         </li>
                         <template v-if="role == 'admin'">
                         <li class="nav-item">
-                            <router-link :to="{ name: 'barang' }" class="nav-link">
+                            <router-link :to="{ name: 'mobil' }" class="nav-link">
                                 <i class="nav-icon fas fa-car"></i> 
                                     <p>Mobil</p>
                             </router-link>

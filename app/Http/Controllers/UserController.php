@@ -14,7 +14,7 @@ class UserController extends Controller
     public function rules(){
         return [
             'name'              => 'required',
-            'email'             => 'required|email',
+            'nip'               => 'required',
             'role'              => 'required'
         ];
     }
@@ -70,8 +70,8 @@ class UserController extends Controller
             }else{
                 if($request->password != $request->retype_password){
                     $message = 'Password tidak sama !';
-                }else if($data = UserModel::where('email', '=', $request->email)->first()){
-                    $message = 'Email sudah digunakan !';
+                }else if($data = UserModel::where('nip', '=', $request->nip)->first()){
+                    $message = 'NIP sudah digunakan !';
                 }else{
                     do {
                         // random number for 4 digit
@@ -82,7 +82,7 @@ class UserController extends Controller
                     $data =  new UserModel();
                     $data->account_id   = $account_id;
                     $data->name         = $request->name;
-                    $data->email        = $request->email;
+                    $data->nip          = $request->nip;
                     $data->role         = $request->role;
                     $data->password     = Hash::make($request->password);
                     $data->status       = 'actived';
@@ -95,7 +95,7 @@ class UserController extends Controller
                             $dataPegawai =  new PegawaiModel();
                             $dataPegawai->account_id   = $cekUser->account_id;
                             $dataPegawai->nama         = $cekUser->name;
-                            $dataPegawai->email        = $cekUser->email;
+                            $dataPegawai->nip          = $cekUser->nip;
                             $dataPegawai->created_by   = session('account_id');
                             $dataPegawai->save();
                             $class = 'success';
@@ -127,7 +127,7 @@ class UserController extends Controller
                 $data = UserModel::where('id',$request->id)
                 ->update([
                     'name'  => $request->name,
-                    'email' => $request->email,
+                    'nip'   => $request->nip,
                     'role'  => $request->role,
                 ]);
 
@@ -138,7 +138,7 @@ class UserController extends Controller
                         $data = PegawaiModel::where('account_id',$cekUser->account_id)
                         ->update([
                             'nama'          => $request->name,
-                            'email'         => $request->email,
+                            'nip'           => $request->nip,
                             'updated_by'    => session('account_id')
                         ]);
                         $class = 'success';

@@ -34,8 +34,8 @@
                                             <tr style="text-align:center">
                                                 <th>No</th>
                                                 <th>Account Id</th>
+                                                <th>NIP</th>
                                                 <th>Nama</th>
-                                                <th>Email</th>
                                                 <th>Role</th>
                                                 <th></th>
                                             </tr>
@@ -45,8 +45,8 @@
                                                 <tr v-for="(row, index) in filterData" :key="row.id">
                                                     <td style="text-align:center">{{ index + 1 }}</td>
                                                     <td>{{ row.account_id }}</td>
+                                                    <td>{{ row.nip }}</td>
                                                     <td>{{ row.name }}</td>
-                                                    <td>{{ row.email }}</td>
                                                     <td>{{ row.role }}</td>
                                                     <td>
                                                         <div class="input-group">

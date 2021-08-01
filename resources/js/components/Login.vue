@@ -9,14 +9,16 @@
           <p class="login-box-msg">Sign in</p>
           <form @submit.prevent="onSubmit">
             <div class="input-group mb-3">
-              <input type="email" 
-                v-model="email" 
+              <input type="number" 
+                minlength="18"
+                maxlength="19"
+                v-model="nip" 
                 class="form-control" 
-                placeholder="Email" 
+                placeholder="NIP" 
                 required="">
               <div class="input-group-append">
                 <div class="input-group-text">
-                  <span class="fas fa-envelope"></span>
+                  <span class="fas fa-address-card"></span>
                 </div>
               </div>
             </div>
@@ -47,8 +49,8 @@
             </div>
           </form>
           <p class="mb-0">
-            <router-link :to="{ name: 'register' }">
-                <p>Register</p>
+            <router-link :to="{ name: 'signup' }">
+                <p>Sign Up</p>
             </router-link>
           </p>
         </div>
@@ -61,14 +63,14 @@ export default {
     name: 'login',
     data () {
         return {
-            email: '',
+            nip: '',
             password: '',
         }
     },
     methods: {
         onSubmit: function () {
                 let data = {
-                    'email' : this.email,
+                    'nip' : this.nip,
                     'password' : this.password
                 }
                 axios.post('/api/login', data)
@@ -78,7 +80,6 @@ export default {
                     Vue.$cookies.set('id', response.data.data.id);
                     Vue.$cookies.set('account_id', response.data.data.account_id);
                     Vue.$cookies.set('name', response.data.data.name);
-                    Vue.$cookies.set('email', response.data.data.email);
                     Vue.$cookies.set('role', response.data.data.role);
                     Vue.$cookies.set('token', response.data.data.api_token, "60MIN");
                     

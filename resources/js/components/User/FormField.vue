@@ -12,6 +12,13 @@
                     <input type="hidden" class="form-control" 
                                 v-model="formData.id" disabled >
                     <template v-if="cmd !== 'change'">
+                         <div class="form-group row">
+                            <label class="col-form-label col-md-4">NIP</label>
+                            <div class="col-md-8">
+                                <input autocomplete="off" type="number" class="form-control" 
+                                v-model="formData.nip" :disabled="disabled" required>
+                            </div> 
+                        </div>
                         <div class="form-group row">
                             <label class="col-form-label col-md-4">Nama</label>
                             <div class="col-md-8">
@@ -20,18 +27,12 @@
                             </div> 
                         </div>
                         <div class="form-group row">
-                            <label class="col-form-label col-md-4">Email</label>
-                            <div class="col-md-8">
-                                <input autocomplete="off" type="email" class="form-control" 
-                                v-model="formData.email" :disabled="disabled" required>
-                            </div> 
-                        </div>
-                        <div class="form-group row">
                             <label class="col-form-label col-md-4">Role</label>
                             <div class="col-md-8">
                                 <select class="form-control" v-model="formData.role"
                                 :disabled="disabled" required>
                                     <option value="admin">Admin</option>
+                                    <option value="pegawai">Pegawai</option>
                                     <option value="member">Member</option>
                                 </select>
                             </div> 

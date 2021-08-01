@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use \App\PeminjamanModel;
-use \App\BarangModel;
+use \App\MobilModel;
 use \App\TmpPinjamModel;
 use PDF;
 class CheckPeminjamanController extends Controller
@@ -17,7 +17,7 @@ class CheckPeminjamanController extends Controller
     
     public function rules(){
         return [
-            'barang_id'     => 'required',
+            'mobil_id'     => 'required',
             'tgl_pinjam'    => 'required',
             'tgl_kembali'   => 'required',
             'keperluan'     => 'required'
@@ -42,12 +42,12 @@ class CheckPeminjamanController extends Controller
 
         $scroll     = ((int)$request->s - 1) * 100;
         try {
-            $response= DB::table('pinjam as p')
-            ->leftJoin('barang as b','b.id','=','p.barang_id')
-            ->leftJoin('pegawai as u','u.account_id','=','p.pegawai_id')
+            $response= DB::table('tbl_pinjam as p')
+            ->leftJoin('tbl_mobil as b','b.id','=','p.mobil_id')
+            ->leftJoin('tbl_pegawai as u','u.account_id','=','p.pegawai_id')
             ->offset($scroll)
             ->limit(100)
-            ->select('p.*','b.no_plat','b.jenis','u.nama as pegawai')
+            ->select('p.*','b.no_plat','b.jenis','b.gambar','u.nama as pegawai')
             ->get();
             if(sizeof($response)==0){
                 $response = array("data"=>"empty");
@@ -75,6 +75,20 @@ class CheckPeminjamanController extends Controller
             ]);
 
             $getPinjamById = PeminjamanModel::find($request->id);
+
+            if($request->status == 'approved'){
+                $getMobilById = MobilModel::find($getPinjamById->mobil_id);
+
+                $total      = $getMobilById->total_pinjam + 1;
+                $persentase = $getMobilById->persentase - 5;
+                
+                $data_mobil = MobilModel::where('id',$getMobilById->id)
+                ->update([
+                    'total_pinjam'   => $total,
+                    'persentase'     => $persentase
+                ]);
+            }
+
             if($getPinjamById){
                 $tmpPinjam =  new TmpPinjamModel();
                 $tmpPinjam->pinjam_id       = $getPinjamById->id;
@@ -115,17 +129,17 @@ class CheckPeminjamanController extends Controller
     {   
         $scroll     = ((int)$request->s - 1) * 100;
         try {
-            $response= DB::table('tmp_pinjam as tmp')
-            ->leftJoin('pinjam as pinjam','pinjam.id','=','tmp.pinjam_id')
+            $response= DB::table('tbl_detail_pinjam as tmp')
+            ->leftJoin('tbl_pinjam as pinjam','pinjam.id','=','tmp.pinjam_id')
             ->leftJoin('users as user','user.account_id','=','tmp.user_id')
-            ->leftJoin('pegawai as pegawai','pegawai.account_id','=','pinjam.pegawai_id')
-            ->leftJoin('barang as barang','barang.id','=','pinjam.barang_id')
+            ->leftJoin('tbl_pegawai as pegawai','pegawai.account_id','=','pinjam.pegawai_id')
+            ->leftJoin('tbl_mobil as mobil','mobil.id','=','pinjam.mobil_id')
             ->where('tmp.pinjam_id', $request->pinjam_id)
             ->offset($scroll)
             ->limit(100)
             ->select(
                 'tmp.*','pegawai.nama as pegawai',
-                'user.name as user','barang.no_plat','barang.jenis',
+                'user.name as user','mobil.no_plat','mobil.jenis',
                 'pinjam.keperluan'
             )
             ->get();
@@ -149,5 +163,24 @@ class CheckPeminjamanController extends Controller
             $response = $e->getMessage();
         }
         return response()->json($response);
+    }
+
+    public function grafik(){
+        try {
+            $response = DB::select(DB::raw(
+                "SELECT MONTH(tgl_pinjam) as bulan, COUNT(*) as jumlah, mobil_id
+                FROM tbl_pinjam  GROUP BY tgl_pinjam"
+            ));
+            // $response= DB::table('tbl_pinjam')
+            // ->groupBy('tgl_pinjam')
+            // ->select('*')
+            // ->get();
+            if(sizeof($response)==0){
+                $response = array("data"=>"empty");
+            }
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+        }
+    	return response()->json($response);
     }
 }

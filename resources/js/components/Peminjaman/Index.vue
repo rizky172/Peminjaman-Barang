@@ -24,7 +24,7 @@
                                             <div class="col-sm-4">
                                                 <div class="form-group">
                                                     <label>Mobil</label>
-                                                    <select class="form-control" v-model="barang_id" required>
+                                                    <select class="form-control" v-model="mobil_id" required>
                                                         <option v-for="row in options" v-bind:value="row.id">
                                                             {{ row.jenis }}
                                                         </option>
@@ -90,6 +90,7 @@
                                                 <th rowspan="2" style="vertical-align: middle;">No</th>
                                                 <th rowspan="2" style="vertical-align: middle;">No Plat</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Jenis</th>
+                                                <th rowspan="2" style="vertical-align: middle;">Gambar</th>
                                                 <th colspan="3">Tanggal</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Keperluan</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Notes</th>
@@ -108,6 +109,16 @@
                                                     <td style="text-align:center">{{ index + 1 }}</td>
                                                     <td>{{ row.no_plat }}</td>
                                                     <td>{{ row.jenis }}</td>
+                                                    <td style="text-align:center">
+                                                        <template v-if="row.gambar">
+                                                            <a target="_blank" :href="'/images/mobil/'+row.gambar">
+                                                                <img :src="'/images/mobil/'+row.gambar" width="70px">
+                                                            </a>
+                                                        </template>
+                                                        <template v-else>
+                                                            <img :src="'/images/cars.png'" width="40px">
+                                                        </template>
+                                                    </td>
                                                     <td>{{ row.tgl_pinjam | convertDate }}</td>
                                                     <td>{{ row.tgl_kembali | convertDate }}</td>
                                                     <td>{{ row | diffDate }}</td>
@@ -127,6 +138,11 @@
                                                                 <b-button v-if="row.status == 'pending'" class="dropdown-item" @click="delData(row.id)">
                                                                     <i class="fa fa-trash"></i> Delete
                                                                 </b-button>
+                                                                <a target="_blank" v-bind:href="'/generatePDF/peminjaman/'+row.id"> 
+                                                                    <b-button v-if="row.status == 'approved' || row.status == 'return'" class="dropdown-item">
+                                                                        <i class="fa fa-download"></i> PDF
+                                                                    </b-button>
+                                                                </a>
                                                                 <b-button class="dropdown-item" v-b-modal="'modal-history'" @click="formModal(row.id,'history')">
                                                                     <i class="fa fa-table"></i> History
                                                                 </b-button>
@@ -137,7 +153,7 @@
                                             </template>
                                             <template v-else>
                                                 <tr style="text-align:center">
-                                                    <td colspan="10">Data Kosong</td>
+                                                    <td colspan="11">Data Kosong</td>
                                                 </tr>
                                             </template>
                                         </tbody>
@@ -206,14 +222,14 @@ export default {
             isPageNext: 0,
             isPageOld: 10,
             options:{},
-            barang_id:0,
+            mobil_id:0,
             no_plat: '',
             formData:{}
         }
     },
     mounted() {
         this.getData();
-        this.getDataBarang();
+        this.getDataMobil();
         this.getCount();
     },
     filters: {
@@ -316,13 +332,13 @@ export default {
                 if(response.data !== 'empty'){
                     this.totalPage = response.data.length;
                     this.table = response.data;
-                    this.getDataBarang();
+                    this.getDataMobil();
                     Bus.$emit('setTotalPage', this.totalPage);
                 }
             }).catch(e => console.log(e));
         },
-        getDataBarang: function(){
-            let url = this.getUrl+'getBarangAll';
+        getDataMobil: function(){
+            let url = this.getUrl+'getMobilAll';
             axios.get(url).then(response => {
                 if(response.data !=='empty'){
                     this.options = response.data;
@@ -340,13 +356,13 @@ export default {
             Bus.$emit('confirm', data)
         },
         onSubmit: function(){
-            Object.assign(this.formData,{barang_id:this.barang_id});
+            Object.assign(this.formData,{mobil_id:this.mobil_id});
             let url = this.postUrl+'store';
             axios.post(url, this.formData).then(response => {
                 if(response.data.class == 'success'){
                     Bus.$emit('sweetAlert', response.data);
                     this.formData={};
-                    this.barang_id=0;
+                    this.mobil_id=0;
                     this.no_plat='';
                     this.getData();
                 }else{
@@ -367,11 +383,11 @@ export default {
         isScroll: function () {
             this.getData()
         },
-        barang_id: function(){
-            if(this.barang_id > 0){
-                let barang      = this.options.find(e => e.id == this.barang_id);
-                if(barang){
-                    this.no_plat       = barang.no_plat;
+        mobil_id: function(){
+            if(this.mobil_id > 0){
+                let mobil      = this.options.find(e => e.id == this.mobil_id);
+                if(mobil){
+                    this.no_plat       = mobil.no_plat;
                 }
             }
         }

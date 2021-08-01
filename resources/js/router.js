@@ -2,10 +2,10 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from './components/Login.vue';
 import Eror404 from './components/Error404.vue';
-import Register from './components/Register.vue';
+import SignUp from './components/SignUp.vue';
 import Home from './components/Home.vue';
 import User from './components/User/Index.vue';
-import Barang from './components/Barang/Index.vue';
+import Mobil from './components/Mobil/Index.vue';
 import Pegawai from './components/Pegawai/Index.vue';
 import Profil from './components/Profil.vue';
 import Peminjaman from './components/Peminjaman/Index.vue';
@@ -18,10 +18,8 @@ const router = new Router({
   routes: [
     {
       path: '*', 
-      component: Eror404,
-      meta: {
-        auth: true
-      }
+      name: 'error',
+      component: Eror404
     },
     {
       name: 'login',
@@ -29,9 +27,9 @@ const router = new Router({
       component: Login
     },
     {
-      name: 'register',
-      path: '/register',
-      component: Register
+      name: 'signup',
+      path: '/signup',
+      component: SignUp
     },
     {
       name: 'home',
@@ -58,9 +56,9 @@ const router = new Router({
       },
     },
     {
-      name:'barang',
-      path:'/barang',
-      component: Barang,
+      name:'mobil',
+      path:'/mobil',
+      component: Mobil,
       meta: {
         auth: true
       },

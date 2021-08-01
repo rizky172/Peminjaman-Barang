@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TmpPinjamModel extends Model
 {
-    protected $table = 'tmp_pinjam';
+    protected $table = 'tbl_detail_pinjam';
 }

@@ -33,6 +33,7 @@
                                                 <th rowspan="2" style="vertical-align: middle;">Pegawai</th>
                                                 <th rowspan="2" style="vertical-align: middle;">No Plat</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Jenis</th>
+                                                <th rowspan="2" style="vertical-align: middle;">Gambar</th>
                                                 <th colspan="3">Tanggal</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Keperluan</th>
                                                 <th rowspan="2" style="vertical-align: middle;">Notes</th>
@@ -52,6 +53,16 @@
                                                     <td>{{ row.pegawai }}</td>
                                                     <td>{{ row.no_plat }}</td>
                                                     <td>{{ row.jenis }}</td>
+                                                    <td style="text-align:center">
+                                                        <template v-if="row.gambar">
+                                                            <a target="_blank" :href="'/images/mobil/'+row.gambar">
+                                                                <img :src="'/images/mobil/'+row.gambar" width="70px">
+                                                            </a>
+                                                        </template>
+                                                        <template v-else>
+                                                            <img :src="'/images/cars.png'" width="40px">
+                                                        </template>
+                                                    </td>
                                                     <td>{{ row.tgl_pinjam | convertDate }}</td>
                                                     <td>{{ row.tgl_kembali | convertDate }}</td>
                                                     <td>{{ row | diffDate }}</td>
@@ -78,7 +89,7 @@
                                                                     <i class="fa fa-forward"></i> Return
                                                                 </b-button>
                                                                 <a target="_blank" v-bind:href="'/generatePDF/peminjaman/'+row.id"> 
-                                                                    <b-button v-if="row.status == 'approved'" class="dropdown-item">
+                                                                    <b-button v-if="row.status == 'approved' || row.status == 'return'" class="dropdown-item">
                                                                         <i class="fa fa-download"></i> PDF
                                                                     </b-button>
                                                                 </a>
@@ -92,7 +103,7 @@
                                             </template>
                                             <template v-else>
                                                 <tr style="text-align:center">
-                                                    <td colspan="11">Data Kosong</td>
+                                                    <td colspan="12">Data Kosong</td>
                                                 </tr>
                                             </template>
                                         </tbody>

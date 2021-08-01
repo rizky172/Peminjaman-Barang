@@ -12,6 +12,9 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import router from './router';
 import cookies from 'vue-cookies';
 import BootstrapVue from 'bootstrap-vue';
+// import Chart from 'chart.js';
+// import VueCharts from 'vue-chartjs'
+// import { Bar, Line } from 'vue-chartjs'
 // import VueHtml2pdf from 'vue-html2pdf';
 Vue.component('pagination', require('laravel-vue-pagination')); 
 Vue.use(VueSweetalert2);
