@@ -13,6 +13,16 @@
                                 v-model="formData.id" disabled >
                     <template v-if="cmd !== 'change'">
                         <div class="form-group row">
+                            <label class="col-form-label col-md-4">Foto</label>
+                            <div class="col-md-8">
+                                <input autocomplete="off" type="file" class="form-control" 
+                                @change="setFile" :disabled="disabled" ref="image" id="image">
+                                <!-- <br> -->
+                                <img v-if="foto" :src="foto" width="100%" height="60%">
+                                <img v-else-if="formData.foto" :src="'/images/profil/'+formData.foto" width="100%" height="60%">
+                            </div> 
+                        </div>
+                        <div class="form-group row">
                             <label class="col-form-label col-md-4">NIP</label>
                             <div class="col-md-8">
                                 <input autocomplete="off" type="number" class="form-control"
@@ -127,7 +137,8 @@ export default {
             formData: {},
             show: false,
             cmd: 'store',
-            disabled: false
+            disabled: false,
+            foto: null
         }
     },
     methods: {
@@ -135,6 +146,7 @@ export default {
             this.cmd = 'store';
             this.formData = {};
             this.disabled = false;
+            this.foto = null;
         },
         onSubmit: function(){
             let url = this.postUrl+this.cmd;
@@ -163,6 +175,14 @@ export default {
                     }
                 }
             }).catch(e => console.log(e));
+        },
+        setFile:function(e){
+            var fileReader = new FileReader()
+            fileReader.readAsDataURL(e.target.files[0])
+            fileReader.onload = (e) => {
+                this.formData.file = e.target.result;
+                this.foto = e.target.result;
+            }   
         }
     },
     created: function () {

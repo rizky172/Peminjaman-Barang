@@ -4,8 +4,37 @@
             <section class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
+                            <br>
+                            <br>
                             <h1>Detail Peminjaman Mobil</h1>
+                        </div>
+                        <div class="col-sm-7">
+                            <form role="form" @submit.prevent="createReport">
+                                <label for="">Laporan Bulanan</label>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Dari Tanggal</label>
+                                            <input v-model="dates.dari_tanggal" type="date" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Sampai Tanggal</label>
+                                            <input v-model="dates.sampai_tanggal" type="date" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="">_</label>
+                                             <b-button type="submit" class="form-control btn btn-success">
+                                                <i class="fa fa-download"></i> PDF
+                                            </b-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -175,6 +204,7 @@ export default {
             isPageNext: 0,
             isPageOld: 10,
             show: false,
+            dates:{}
         }
     },
     mounted() {
@@ -317,7 +347,15 @@ export default {
                 }
             }).catch(e => console.log(e));
             
-        }
+        },
+        createReport: function(){
+            let url = this.postUrl+'getReportBulanan';
+            axios.post(url, this.dates, {responseType: 'blob'}).then(response => {
+                const file = new Blob([response.data],{type: 'application/pdf'});
+                const fileURL = URL.createObjectURL(file);
+                window.open(fileURL);
+                }).catch(e => console.log(e));
+            }
     },
     created: function () {
         Bus.$on('refreshData', this.getData);

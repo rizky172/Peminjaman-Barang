@@ -1,5 +1,6 @@
 <script>
-  import { Bar } from 'vue-chartjs'
+  import { Bar } from 'vue-chartjs';
+  import moment from 'moment';
 
   export default {
     extends: Bar,
@@ -11,10 +12,7 @@
     },
     data () {
       return {
-        chartData: {
-          labels: [],
-          datasets: []
-        },
+        chartData: {},
         options: {
           scales: {
             yAxes: [{
@@ -36,53 +34,46 @@
           },
           responsive: true,
           maintainAspectRatio: false
-        },
-        options2: [],
+        }
       }
     },
-    mounted () {
-      this.renderChart(this.chartData, this.options);
-      // this.bar();
-    },
     methods: {
-      getData: function(){
-        var dataset = [];
-        // var labels = [7,8];
-        let url = this.getUrl+'grafik';
-        axios.get(url).then(response => {
-            // console.log(response.data);
-            response.data.forEach((row, i) => {
-              this.options2 = row.bulan;
-              // labels.push(row.bulan);
-              // this.chartData.labels = ['aku'];
-              // this.$set(this.chartData.datasets, i, {
-              //   label: 'Mobil',
-              //   data : [1],
-              //   fill: false,
-              //   borderColor: '#2554FF',
-              //   backgroundColor: '#2554FF',
-              //   borderWidth: 1
-              // })
-            });
-        }).catch(e => console.log(e));
-        console.log(this.options2);
-        // this.chartData.labels = labels;
-        let data = {
-          label: 'Mobil',
-          data: [100],
-          fill: false,
-          borderColor: '#2554FF',
-          backgroundColor: '#2554FF',
-          borderWidth: 1
-        };
+      getData: function(id){
+        this.chartData = {};
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        var randomColor = "rgb(" + r + "," + g + "," + b + ")";
         
-        dataset.push(data);
-        this.chartData.datasets = dataset;
-        console.log(this.chartData);
+        var name = [];
+        var jumlah = [];
+        var labels = [];
+        
+        axios.get(this.getUrl+'grafik/'+id).then(response => {
+          name.push(response.data[0]['mobil']);
+          response.data.forEach((row, i) => {
+            const dates = moment(row.date, "YYYYMMDD").format("YYYY-MM");
+            jumlah.push(row.jumlah);
+            labels.push(dates);
+          });
+          
+          this.renderChart(this.chartData, this.options);
+        }).catch(e => console.log(e));
+        
+        var dataset = [
+          {
+            label: name,
+            data: jumlah,
+            fill: false,
+            backgroundColor: randomColor
+          }
+        ];
+        this.chartData.labels=labels;
+        this.chartData.datasets=dataset;
       }
     },
     created: function () {
-        this.getData();
+      Bus.$on('loadChart', this.getData);
     },
   }
 </script>

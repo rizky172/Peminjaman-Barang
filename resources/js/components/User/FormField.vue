@@ -32,7 +32,6 @@
                                 <select class="form-control" v-model="formData.role"
                                 :disabled="disabled" required>
                                     <option value="admin">Admin</option>
-                                    <option value="pegawai">Pegawai</option>
                                     <option value="member">Member</option>
                                 </select>
                             </div> 

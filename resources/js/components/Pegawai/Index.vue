@@ -53,7 +53,16 @@
                                                     <td>{{ row.tgl_lahir }}</td>
                                                     <td>{{ row.unit_kerja }}</td>
                                                     <td>{{ row.jabatan }}</td>
-                                                    <td>{{ row.foto }}</td>
+                                                    <td style="text-align:center">
+                                                        <template v-if="row.foto">
+                                                            <a target="_blank" :href="'/images/profil/'+row.foto">
+                                                                <img :src="'/images/profil/'+row.foto" width="70px">
+                                                            </a>
+                                                        </template>
+                                                        <template v-else>
+                                                            <img :src="'/images/profile.png'" width="40px">
+                                                        </template>
+                                                    </td>
                                                     <td>
                                                         <div class="input-group">
                                                             <button style="margin:auto" type="button" class="btn btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown">

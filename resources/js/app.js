@@ -12,6 +12,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import router from './router';
 import cookies from 'vue-cookies';
 import BootstrapVue from 'bootstrap-vue';
+import VueMoment from 'vue-moment';
 // import Chart from 'chart.js';
 // import VueCharts from 'vue-chartjs'
 // import { Bar, Line } from 'vue-chartjs'
@@ -21,7 +22,8 @@ Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.use(cookies);
-// Vue.use(VueHtml2pdf);
+// Vue.use(require('vue-moment'));
+Vue.use(VueMoment);
 
 
 Vue.config.productionTip = false

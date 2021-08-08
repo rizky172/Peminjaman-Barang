@@ -93,6 +93,7 @@ class MobilController extends Controller
                         $data->no_plat      = $request->no_plat;
                         $data->jenis        = $request->jenis;
                         $data->gambar       = $filename;
+                        $data->persentase   = 100;
                         $data->created_by   = session('account_id');
                         $data->save();
                         $class = 'success';

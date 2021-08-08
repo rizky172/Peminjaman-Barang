@@ -12,6 +12,7 @@ use \App\PeminjamanModel;
 use \App\MobilModel;
 use \App\TmpPinjamModel;
 use PDF;
+
 class CheckPeminjamanController extends Controller
 {   
     
@@ -165,16 +166,15 @@ class CheckPeminjamanController extends Controller
         return response()->json($response);
     }
 
-    public function grafik(){
+    public function grafik($id){
         try {
             $response = DB::select(DB::raw(
-                "SELECT MONTH(tgl_pinjam) as bulan, COUNT(*) as jumlah, mobil_id
-                FROM tbl_pinjam  GROUP BY tgl_pinjam"
+                "SELECT t1.tgl_pinjam as date, COUNT(t1.id) as jumlah, t2.jenis as mobil
+                FROM tbl_pinjam t1
+                LEFT JOIN tbl_mobil t2 ON t2.id=t1.mobil_id
+                WHERE t1.mobil_id=$id
+                GROUP BY t1.tgl_pinjam"
             ));
-            // $response= DB::table('tbl_pinjam')
-            // ->groupBy('tgl_pinjam')
-            // ->select('*')
-            // ->get();
             if(sizeof($response)==0){
                 $response = array("data"=>"empty");
             }
@@ -182,5 +182,39 @@ class CheckPeminjamanController extends Controller
             $response = $e->getMessage();
         }
     	return response()->json($response);
+    }
+
+    public function getMobilAll()
+    {   
+        try {
+            $response= MobilModel::all();
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function getReportBulanan(Request $request){
+        try {
+            $response = DB::select(DB::raw(
+                "SELECT t1.tgl_pinjam, t1.tgl_kembali, t1.keperluan, t2.notes, 
+                t3.no_plat, t3.jenis, 
+                t4.nama as pegawai, t4.nip, t4.jabatan, 
+                t5.name as user, t6.nip as nip_user
+                FROM tbl_pinjam t1
+                LEFT JOIN tbl_detail_pinjam t2 ON t2.pinjam_id=t1.id AND t2.id=
+                (SELECT MAX(id) FROM tbl_detail_pinjam WHERE pinjam_id=t1.id)
+                LEFT JOIN tbl_mobil t3 ON t3.id=t1.mobil_id
+                LEFT JOIN tbl_pegawai t4 ON t4.account_id=t1.pegawai_id
+                LEFT JOIN users t5 ON t5.account_id=t2.user_id
+                LEFT JOIN tbl_pegawai t6 ON t6.account_id=t5.account_id
+                WHERE (t1.status='approved' OR t1.status='return') AND (t1.tgl_pinjam BETWEEN '$request->dari_tanggal' AND '$request->sampai_tanggal')"
+            ));
+            $pdf = PDF::loadview('generatePDF.bulanan',['data'=>$response]);
+            $pdf->setPaper('A4', 'potrait');
+        } catch (\Exception $e) {
+            $pdf = $e->getMessage();
+        }
+    	return $pdf->stream();
     }
 }

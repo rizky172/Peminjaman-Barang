@@ -97,7 +97,10 @@ Route::group(["prefix"=>"/cek_peminjaman"], function(){
 
         Route::post('/getHistoryById', 'CheckPeminjamanController@getHistoryById');
         Route::get('/countHistory/{id}', 'CheckPeminjamanController@countHistory');
-        Route::get('/grafik', 'CheckPeminjamanController@grafik');
+        Route::get('/grafik/{id}', 'CheckPeminjamanController@grafik');
+        Route::get('/getMobilAll', 'CheckPeminjamanController@getMobilAll');
+
+        Route::post('/getReportBulanan', 'CheckPeminjamanController@getReportBulanan');
     });
 });
 

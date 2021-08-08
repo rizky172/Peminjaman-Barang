@@ -2,7 +2,7 @@
   <div class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
-        <b>Peminjaman Barang</b>
+        <b>SIRODA</b>
       </div>
       <div class="card">
         <div class="card-body login-card-body">

@@ -50,13 +50,13 @@
                                     <p>Peminjaman</p>
                             </router-link>
                         </li>
-                        <li class="nav-item">
-                            <router-link :to="{ name: 'cek_peminjaman' }" class="nav-link">
-                                <i class="nav-icon fas fa-check"></i> 
-                                    <p>Check Peminjaman</p>
-                            </router-link>
-                        </li>
                         <template v-if="role == 'admin'">
+                            <li class="nav-item">
+                                <router-link :to="{ name: 'cek_peminjaman' }" class="nav-link">
+                                    <i class="nav-icon fas fa-check"></i> 
+                                        <p>Check Peminjaman</p>
+                                </router-link>
+                            </li>
                             <li class="nav-header">EXAMPLES</li>
                             <li class="nav-item">
                                 <router-link :to="{ name: 'pegawai' }" class="nav-link">

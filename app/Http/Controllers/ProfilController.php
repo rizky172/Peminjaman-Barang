@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use \App\PegawaiModel;
 use \App\UserModel;
 use \App\LogModel;
@@ -28,9 +29,11 @@ class ProfilController extends Controller
 
     public function table(Request $request)
     {   
+        $account_id = session('account_id');
         $scroll = ((int)$request->s - 1) * 100;
         try {
             $response= LogModel::select('*')
+            ->where('account_id', $account_id)
             ->offset($scroll)
             ->limit(100)
             ->get();
@@ -77,6 +80,32 @@ class ProfilController extends Controller
             if ($validator->fails()) {
                 $message = $validator->errors()->first();
             }else{
+
+                $file = PegawaiModel::find($request->id);
+
+                if($request->file){
+                    $file = PegawaiModel::where('id',$request->id)->first();
+                    if($file){
+                        File::delete('images/profil/'.$file->foto);
+                    }
+                    
+                    $explode = explode(',', $request->file);
+                    $decode = base64_decode($explode[1]);
+                    if(str_contains($explode[0],'png')){
+                        $extention = 'png';
+                    }else if(str_contains($explode[0],'gif')){
+                        $extention = 'gif';
+                    }else{
+                        $extention = 'jpg';
+                    }
+
+                    $filename = $request->nama."-".time().".".$extention;
+                    $path = public_path().'/images/profil/'.$filename;
+                    file_put_contents($path, $decode);
+                }else{
+                    $filename = $file->gambar;
+                }
+
                 $data = PegawaiModel::where('account_id',$request->account_id)
                 ->update([
                     'nip'           => $request->nip,
@@ -88,8 +117,10 @@ class ProfilController extends Controller
                     'jabatan'       => $request->jabatan,
                     'unit_kerja'    => $request->unit_kerja,
                     'email'         => $request->email,
-                    'tlp'           => $request->tlp
+                    'tlp'           => $request->tlp,
+                    'foto'          => $filename
                 ]);
+
                 if($data){
                     $cekPegawai = PegawaiModel::where('account_id',$request->account_id)->first();
                     if($cekPegawai){

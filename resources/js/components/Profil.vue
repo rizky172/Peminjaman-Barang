@@ -20,9 +20,16 @@
                         <div class="card card-primary card-outline">
                         <div class="card-body box-profile">
                             <div class="text-center">
-                            <img class="profile-user-img img-fluid img-circle"
-                                src="/images/profile.png"
-                                alt="User profile picture">
+                                <template v-if="foto">
+                                    <img class="profile-user-img img-fluid"
+                                    :src="'/images/profil/'+foto"
+                                    alt="User profile picture">
+                                </template>
+                                <template v-else>
+                                    <img class="profile-user-img img-fluid img-circle"
+                                    src="/images/profile.png"
+                                    alt="User profile picture">
+                                </template>
                             </div>
                             <h3 class="profile-username text-center">{{ formData.nama ? formData.nama : 'Data Tidak Ada' }}</h3>
                             <p class="text-muted text-center">{{ formData.nip ? formData.nip : 'Data Tidak Ada' }}</p>
@@ -195,7 +202,8 @@ export default {
             isScroll: 0,
             isCurrentPage: 1,
             isPageNext: 0,
-            isPageOld: 10
+            isPageOld: 10,
+            foto: ''
         }
     },
     mounted() {
@@ -281,6 +289,7 @@ export default {
             axios.get(url).then(response => {
                 if(response.data){
                     this.formData=response.data;
+                    this.foto=response.data.foto;
                 }
             }).catch(e => console.log(e));
         },
